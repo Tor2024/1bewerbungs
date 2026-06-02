@@ -51,7 +51,7 @@ async function callGemini(prompt, retries = 3) {
     throw new Error('All API attempts failed');
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -132,7 +132,8 @@ User Constraints: Уровень немецкого B1, проживание в 
         console.error('Error:', error);
         return res.status(500).json({ 
             error: 'Generation failed', 
-            details: error.message 
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
-}
+};
