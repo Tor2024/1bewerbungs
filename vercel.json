@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@latest"
+    "api/generate.js": {
+      "runtime": "nodejs20.x"
     }
   }
 }
