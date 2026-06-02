@@ -1,0 +1,46 @@
+Frontend-Entwickler (m/w/d) React / Next.js
+
+TechSolutions GmbH
+Siegen, Deutschland
+
+Über uns:
+Die TechSolutions GmbH ist ein innovatives Softwareunternehmen mit Sitz in Siegen. 
+Wir entwickeln moderne Webanwendungen für mittelständische Unternehmen und suchen 
+Verstärkung für unser Entwicklerteam.
+
+Ihre Aufgaben:
+• Entwicklung und Wartung von React-basierten Webanwendungen
+• Implementierung von responsiven Benutzeroberflächen mit modernen CSS-Frameworks
+• Integration von REST-APIs und GraphQL-Schnittstellen
+• Zusammenarbeit mit UX-Designern und Backend-Entwicklern
+• Code-Reviews und Qualitätssicherung
+• Technische Dokumentation
+
+Das bringen Sie mit:
+• Fundierte Kenntnisse in JavaScript/TypeScript
+• Erfahrung mit React und idealerweise Next.js
+• Verständnis für HTML5, CSS3 und responsive Design
+• Kenntnisse in Git und modernen Entwicklungswerkzeugen
+• Strukturierte und selbstständige Arbeitsweise
+• Deutschkenntnisse mindestens B1
+• Teamfähigkeit und Kommunikationsstärke
+
+Wir bieten:
+• Unbefristete Anstellung in Vollzeit
+• Flexible Arbeitszeiten und Home-Office-Möglichkeiten
+• Moderne Entwicklungsumgebung
+• Weiterbildungsmöglichkeiten
+• Kollegiales Team und flache Hierarchien
+
+Interessiert?
+Dann senden Sie Ihre vollständigen Bewerbungsunterlagen an:
+
+TechSolutions GmbH
+Personalabteilung
+z. Hd. Frau Schmidt
+Industriestraße 45
+57080 Siegen
+
+oder per E-Mail an: bewerbung@techsolutions.de
+
+Wir freuen uns auf Ihre Bewerbung!

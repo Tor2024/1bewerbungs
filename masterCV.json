@@ -1,0 +1,137 @@
+{
+  "personalInfo": {
+    "name": "Oleh Kalchenko",
+    "birthDate": "18.10.1977",
+    "address": "Kattowitzer Str. 10, 57223 Kreuztal",
+    "phone": "015237237407",
+    "email": "kalchenko2022@gmail.com",
+    "photo": "photo.jpg"
+  },
+  "profile": {
+    "de": "Erfahrener Experte in Datenverarbeitung, Systemtechnik und Zolldeklaration. Spezialist auf Marketing und Import von italienischen Möbeln. Profunde Kenntnisse in Logistik, Zollvorschriften und internationalen Geschäftsbeziehungen.",
+    "currentGoal": "Web Development Position (React, Next.js)"
+  },
+  "languages": {
+    "Ukrainisch": "Muttersprache",
+    "Russisch": "Muttersprache",
+    "English": "Grundkenntnisse",
+    "Deutsch": "Zertifikat B1"
+  },
+  "experience": [
+    {
+      "position": "Stellvertretender Direktor des Zollterminals",
+      "company": "Grand Wind GmbH",
+      "location": "Charkiw, Ukraine",
+      "period": "Mrz 2017 — Feb 2022",
+      "responsibilities": [
+        "Führung eines Teams von Mitarbeitern: Überwachte täglicher Aufgaben und Delegierung von Zuständigkeit",
+        "Effiziente Planung und Organisation: Koordinierung für einen reibungslosen Ablauf der Zollprozesse und Kundenbetreuung",
+        "Kundenbetreuung und Konfliktlösung: Behandlung von Kundenbeschwerden und Aufrechterhaltung von Geschäftsbeziehungen",
+        "Budgetverantwortung und Kostenkontrolle: Verwaltung der Finanzen und Sicherstellung der Rentabilität des Terminals",
+        "Die Verwaltung eines Lieferorts für 120 Lastwagen pro Tag und eines Zolllagers mit einer Fläche von 1700 m"
+      ]
+    },
+    {
+      "position": "Zolldeklarant",
+      "company": "Avanta GmbH",
+      "location": "Charkiw, Ukraine",
+      "period": "Jul 2003 — Mrz 2017",
+      "responsibilities": [
+        "Erfahrung in der Abwicklung von Zollformalitäten für Import- und Exportsendungen",
+        "Kompetenz in der Abwicklung von Zollprüfungen und -anfragen",
+        "Sicherer Umgang mit Zolltarifen und -vorschriften",
+        "Verantwortung für die ordnungsgemäße Zollabwicklung von Warenströmen",
+        "Umfangreiche Erfahrung in der Zusammenarbeit mit Zollägern in Deutschland, Italien, der Türkei, Ungarn, Polen und China"
+      ]
+    },
+    {
+      "position": "Import Manager italienischer Möbel",
+      "company": "Rimini GmbH",
+      "location": "Charkiw, Ukraine",
+      "period": "Jan 2002 — Jul 2003",
+      "responsibilities": [
+        "Verhandlung und Abschluss von Importverträgen für italienische Möbelhersteller",
+        "Identifizierung und Entwicklung neuer Lieferanten in Italien",
+        "Überwachung des Zollverfahrens und Transportlogistik für Möbelimporte",
+        "Betreuung von Kunden und Sicherstellung der pünktlichen Lieferung hochwertiger Möbelstücke"
+      ]
+    },
+    {
+      "position": "Marketing Spezialist",
+      "company": "Intermoda GmbH",
+      "location": "Charkiw, Ukraine",
+      "period": "Feb 2000 — Jan 2002",
+      "responsibilities": [
+        "Entwickelung erfolgreicher Marketingkampagnen zur Steigerung der Markenbekanntheit und des Absatzes",
+        "Verantwortung für die Gestaltung von Werbematerialien und die Umsetzung von Marketingstrategien",
+        "Erfahrung im Social-Media-Management und der Schaltung von Online-Werbung"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Datenverarbeitung und Systemtechnik",
+      "institution": "Charkiw National University of Radio Electronics",
+      "location": "Charkiw, Ukraine",
+      "period": "Sep 1996 — Jun 2001",
+      "details": [
+        "Macromedia Dreamweaver, Macromedia Flash, Macromedia Fireworks, Adobe Photoshop, Word, Excel, Power point, 3D Studio MAX, Flex Clip, Pinnacle Studio, Turbo Pascal, Delphi 2.0 und so weiter",
+        "Einrichtung von Computernetzwerken",
+        "Diplomarbeit zum Thema Approximation von dreidimensionalen Bildern"
+      ]
+    },
+    {
+      "degree": "Mittlere Reife",
+      "institution": "Schule Nummer 1",
+      "location": "Kamjanka-Dniprowskaya, Ukraine",
+      "period": "Sep 1986 — Mai 1996"
+    }
+  ],
+  "skills": {
+    "technical": [
+      "Logistik",
+      "internationale Beziehungen",
+      "Risikomanagement",
+      "Zollvorschriften",
+      "Versandabwicklung",
+      "Kundenservice",
+      "Dokumentation",
+      "Verhandlung",
+      "Marketing",
+      "Import-Manager",
+      "Zolldeklarant",
+      "Systemtechnik"
+    ],
+    "webDevelopment": [
+      "React",
+      "Next.js",
+      "JavaScript",
+      "HTML/CSS",
+      "Webdesign",
+      "3D-Grafikprogramme",
+      "Videobearbeitung"
+    ]
+  },
+  "projects": [
+    {
+      "title": "Seefrachtcontainer-Lieferung",
+      "description": "Erfolgreiche Durchführung des Projekts zur Lieferung von 300 Seefrachtcontainern aus dem Hamburger Hafen in die Ukraine innerhalb von 30 Tagen wurde erfolgreich durchgeführt"
+    },
+    {
+      "title": "Elektronischer Möbelkatalog",
+      "description": "Während meiner Tätigkeit als Importmanager wurde zusätzlich zu meiner Arbeit erfolgreich ein elektronischer Möbelkatalog (mehr als 60 Fabriken) realisiert, der die Sortierung nach Material, Fabrik und Art der Möbel ermöglicht, was den Designern den Einsatz bei VIP-Kunden erleichtert und die Präsentation verschiedener Möbelstücke verbessert"
+    },
+    {
+      "title": "Zollbehörden Logistikprojekte",
+      "description": "Mehr als 5 Projekte zur Logistik und Dokumentenvorbereitung für die Zollbehörden der Ukraine wurden erfolgreich durchgeführt, darunter der Transport von komplexen Objekten (in zerlegtem Zustand) wie finnische Häuser und eine Zuckerfabrik mit 15 Lastwagen"
+    }
+  ],
+  "achievements": [
+    "Umfassende dokumentarische Begleitung von Fracht aus Europa, China und USA durchgeführt und eng mit Speditionen und Zollägern in Ungarn, Deutschland, Italien, Türkei, und Polen zusammengearbeitet",
+    "Verstehe gut, wie der Eigentümerwechsel der Fracht an Zolllager und in Freihandelszonen erfolgt",
+    "Habe viele Zolldokumente wie CMR, Carnet TIR, Rechnungen, Packlisten, Konnossemente, Luftfrachtbriefe, Eisenbahnfrachtbriefe, Ursprungszeugnisse und andere Dokumente ausgefüllt und bearbeitet",
+    "Verwaltung des Zollterminals des Lieferorts, des Zolllagers, die Bereitstellung von Zollmaklerdiensten und die Logistik von Europa über China und die Türkei bis in die USA"
+  ],
+  "driverLicense": "Kategorie B",
+  "hobbies": "Begeistert von Webdesign und der Erstellung von Websites, arbeite auch mit zahlreichen Design- und 3D- Grafikprogrammen sowie Videobearbeitung und -montage"
+}
