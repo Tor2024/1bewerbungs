@@ -18,11 +18,11 @@ AI-powered adaptive German CV and cover letter generator for job applications.
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Tor2024/1bewerbungs.git)
 
 2. Set environment variable in Vercel dashboard:
-   - `GEMINI_API_KEYS` = your comma-separated Gemini API keys
+   - `GEMINI_API_KEY` = your comma-separated Gemini API keys
 
 Example:
 ```
-GEMINI_API_KEYS=AIzaSyABC123...,AIzaSyDEF456...,AIzaSyGHI789...
+GEMINI_API_KEY=AIzaSyABC123...,AIzaSyDEF456...,AIzaSyGHI789...
 ```
 
 ## Local Development
@@ -30,7 +30,7 @@ GEMINI_API_KEYS=AIzaSyABC123...,AIzaSyDEF456...,AIzaSyGHI789...
 1. Clone the repository
 2. Create `.env` file with your API keys:
    ```
-   GEMINI_API_KEYS=your_key_1,your_key_2,your_key_3
+   GEMINI_API_KEY=your_key_1,your_key_2,your_key_3
    ```
 3. Open `index.html` in your browser
 

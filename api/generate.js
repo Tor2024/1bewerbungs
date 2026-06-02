@@ -1,10 +1,10 @@
 // Vercel Serverless Function для генерации документов
 
 // API ключи загружаются из environment variables в Vercel
-const API_KEYS = (process.env.GEMINI_API_KEYS || '').split(',').filter(k => k.trim());
+const API_KEYS = (process.env.GEMINI_API_KEY || '').split(',').filter(k => k.trim());
 
 if (API_KEYS.length === 0) {
-    console.error('⚠️ No API keys found! Set GEMINI_API_KEYS in Vercel environment variables');
+    console.error('⚠️ No API keys found! Set GEMINI_API_KEY in Vercel environment variables');
 }
 
 let currentKeyIndex = 0;
