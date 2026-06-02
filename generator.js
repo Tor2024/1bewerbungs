@@ -1,8 +1,9 @@
 // Document Generator Engine - Core Logic
 class DocumentGenerator {
-    constructor(masterCV, jobDescription) {
+    constructor(masterCV, jobDescription, aiResult = null) {
         this.masterCV = masterCV;
         this.jobDescription = jobDescription;
+        this.aiResult = aiResult;
         this.extractedInfo = this.extractJobInfo();
     }
 
@@ -257,6 +258,181 @@ class DocumentGenerator {
                 neue Technologien einzuarbeiten. Mein Deutsch entspricht dem Niveau B1, das ich stetig 
                 weiterentwickle. Ich bin in Kreuztal ansässig und kann kurzfristig beginnen.
             </p>
+        </div>
+        
+        <div class="closing">
+            <p>
+                Über die Möglichkeit, meine Kenntnisse in einem persönlichen Gespräch näher vorzustellen, 
+                würde ich mich sehr freuen.
+            </p>
+            <p style="margin-top: 6mm;">
+                Mit freundlichen Grüßen
+            </p>
+        </div>
+        
+        <div class="signature">
+            ${name}
+        </div>
+    </div>
+</body>
+</html>`;
+    }
+
+    generateAnschreibenWithAI(aiText) {
+        const { companyName, contactPerson, jobTitle } = this.aiResult || this.extractedInfo;
+        const { name, address, email, phone } = this.masterCV.personalInfo;
+        
+        const greeting = contactPerson 
+            ? `Sehr geehrte Frau ${contactPerson},\nSehr geehrter Herr ${contactPerson},`
+            : 'Sehr geehrte Damen und Herren,';
+
+        const currentDate = new Date().toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        // Convert AI text paragraphs to HTML
+        const paragraphs = aiText.split('\n\n')
+            .filter(p => p.trim())
+            .map(p => `<p>${p.trim()}</p>`)
+            .join('\n            ');
+
+        return `<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anschreiben - ${name}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm 25mm 20mm 25mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            margin-bottom: 10mm;
+        }
+        
+        .sender-line {
+            font-size: 8pt;
+            color: #666;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 2mm;
+            margin-bottom: 3mm;
+        }
+        
+        .recipient {
+            margin-bottom: 8mm;
+            min-height: 40mm;
+        }
+        
+        .recipient-company {
+            font-weight: 600;
+            font-size: 11pt;
+        }
+        
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8mm;
+            font-size: 10pt;
+        }
+        
+        .subject {
+            font-weight: 700;
+            font-size: 12pt;
+            margin-bottom: 6mm;
+            color: #1e3a8a;
+        }
+        
+        .greeting {
+            margin-bottom: 4mm;
+        }
+        
+        .content p {
+            margin-bottom: 4mm;
+            text-align: justify;
+        }
+        
+        .closing {
+            margin-top: 8mm;
+        }
+        
+        .signature {
+            margin-top: 15mm;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 25mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <div class="sender-line">
+                ${name} • ${address}
+            </div>
+            <div class="recipient">
+                <div class="recipient-company">${companyName}</div>
+                ${contactPerson ? `<div>z. Hd. ${contactPerson}</div>` : ''}
+            </div>
+        </div>
+        
+        <div class="meta-info">
+            <div>
+                <strong>${name}</strong><br>
+                ${address}<br>
+                Tel: ${phone}<br>
+                E-Mail: ${email}
+            </div>
+            <div style="text-align: right;">
+                Kreuztal, ${currentDate}
+            </div>
+        </div>
+        
+        <div class="subject">
+            Bewerbung als ${jobTitle}
+        </div>
+        
+        <div class="greeting">
+            ${greeting}
+        </div>
+        
+        <div class="content">
+            ${paragraphs}
         </div>
         
         <div class="closing">

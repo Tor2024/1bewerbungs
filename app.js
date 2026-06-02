@@ -91,7 +91,7 @@ function handlePhotoUpload(event) {
 }
 
 // Generate Documents
-function generateDocuments() {
+async function generateDocuments() {
     if (!masterCV) {
         alert('Bitte laden Sie zuerst einen Master-CV!');
         return;
@@ -103,24 +103,45 @@ function generateDocuments() {
         return;
     }
     
+    // Show loading
+    elements.generateBtn.disabled = true;
+    elements.generateBtn.textContent = '⏳ Generierung läuft...';
+    
     try {
-        const generator = new DocumentGenerator(masterCV, jobDesc);
+        // Call AI API
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                masterCV,
+                jobDescription: jobDesc
+            })
+        });
         
-        // Generate Anschreiben
-        const anschreiben = generator.generateAnschreiben();
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        
+        const aiResult = await response.json();
+        
+        // Generate HTML documents using AI result
+        const generator = new DocumentGenerator(masterCV, jobDesc, aiResult);
+        
+        // Generate Anschreiben with AI content
+        const anschreiben = generator.generateAnschreibenWithAI(aiResult.anschreiben_text);
         elements.anschreibenPreview.innerHTML = anschreiben;
         
         // Generate Lebenslauf
         const lebenslauf = generator.generateLebenslauf(userPhotoData);
         elements.lebenslaufPreview.innerHTML = lebenslauf;
         
-        // Generate Quality Check
-        const qualityCheck = generator.generateQualityCheck();
-        elements.checkSummary.textContent = qualityCheck.summary;
-        elements.checkTone.textContent = qualityCheck.tone_check;
-        elements.checkData.innerHTML = qualityCheck.extracted_data
-            .map(item => `<li>${item}</li>`)
-            .join('');
+        // Show Quality Check
+        elements.checkSummary.textContent = aiResult.check_translation_ru.summary;
+        elements.checkTone.textContent = aiResult.check_translation_ru.tone_check;
+        elements.checkData.innerHTML = [
+            `Firma: ${aiResult.company_name}`,
+            `Kontakt: ${aiResult.contact_person || 'Keine spezifische Person gefunden'}`
+        ].map(item => `<li>${item}</li>`).join('');
         
         // Show output section
         elements.outputSection.style.display = 'block';
@@ -131,6 +152,10 @@ function generateDocuments() {
     } catch (error) {
         alert('Fehler bei der Dokumentengenerierung: ' + error.message);
         console.error('Generation Error:', error);
+    } finally {
+        // Reset button
+        elements.generateBtn.disabled = false;
+        elements.generateBtn.textContent = '✨ Dokumente generieren';
     }
 }
 
