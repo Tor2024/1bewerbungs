@@ -65,6 +65,14 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // Check if API keys are available
+    if (API_KEYS.length === 0) {
+        return res.status(500).json({ 
+            error: 'No API keys configured',
+            details: 'Set GEMINI_API_KEY environment variable in Vercel'
+        });
+    }
+
     try {
         const { masterCV, jobDescription } = req.body;
 
