@@ -92,13 +92,17 @@ if (lebenslaufActions) lebenslaufActions.appendChild(pdfBtnLebenslauf);
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 function initializeApp() {
-    loadStoredMasterCV();
+    // Always load sample CV and photo on startup
+    loadSampleCV();
     loadStoredPhoto();
     loadStoredApplication();
 
-    if (!masterCV) {
-        loadSampleCV();
-    }
+    // Auto-load bundled photo if no photo stored
+    setTimeout(() => {
+        if (!userPhotoData) {
+            loadBundledPhoto();
+        }
+    }, 500);
 }
 
 function loadStoredMasterCV() {
@@ -174,10 +178,32 @@ async function loadSampleCV() {
         masterCV = sampleCV;
         localStorage.setItem(STORAGE_KEYS.masterCV, JSON.stringify(masterCV));
         localStorage.setItem(STORAGE_KEYS.bundledCVVersion, BUNDLED_MASTER_CV_VERSION);
-        showStatus('success', 'Beispiel Master-CV geladen und gespeichert.');
+        showStatus('success', '✓ Master-CV geladen (Oleh Kalchenko)');
     } catch (error) {
         showStatus('error', 'Beispiel-CV konnte nicht geladen werden.');
         console.error('Sample CV load error:', error);
+    }
+}
+
+async function loadBundledPhoto() {
+    try {
+        const response = await fetch('photo.jpg');
+        if (!response.ok) {
+            console.log('Bundled photo not found, skipping');
+            return;
+        }
+
+        const blob = await response.blob();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            userPhotoData = event.target.result;
+            localStorage.setItem(STORAGE_KEYS.userPhoto, userPhotoData);
+            showPhotoPreview(userPhotoData);
+            showStatus('success', '✓ Master-CV und Foto geladen - Bereit zur Verwendung!');
+        };
+        reader.readAsDataURL(blob);
+    } catch (error) {
+        console.log('Could not load bundled photo:', error);
     }
 }
 
@@ -340,7 +366,15 @@ function sanitizeHtml(html) {
 }
 
 function showPhotoPreview(photoData) {
-    elements.photoPreview.innerHTML = `<img src="${photoData}" alt="Bewerbungsfoto">`;
+    elements.photoPreview.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px;">
+            <img src="${photoData}" alt="Bewerbungsfoto" style="width: 80px; height: 100px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;">
+            <div style="flex: 1;">
+                <div style="font-weight: 600; color: #047857; margin-bottom: 4px;">✓ Foto geladen</div>
+                <div style="font-size: 0.85rem; color: #666;">Wird automatisch im Lebenslauf eingefügt</div>
+            </div>
+        </div>
+    `;
 }
 
 function setLoadingState(isLoading) {

@@ -9,39 +9,64 @@
 <body>
     <div class="container">
         <header>
-            <h1>Adaptive Bewerbung</h1>
-            <p class="subtitle">Anschreiben und Lebenslauf passend zur konkreten Stelle</p>
+            <h1>🚀 Schnelle Bewerbung</h1>
+            <p class="subtitle">Ihre Daten sind geladen - Einfach Stellenanzeige einfügen und generieren!</p>
         </header>
 
         <main class="main-content">
             <section class="input-section">
                 <h2>1. Master-CV</h2>
-                <div class="file-upload">
-                    <label for="masterCV" class="upload-label">
-                        <span>Master-CV als JSON laden</span>
-                        <input type="file" id="masterCV" accept=".json,application/json">
-                    </label>
-                    <button id="loadSample" class="btn-secondary" type="button">Beispiel laden</button>
-                </div>
                 <div id="cvStatus" class="status-message"></div>
+                <details style="margin-top: 10px;">
+                    <summary style="cursor: pointer; color: #666; font-size: 0.9rem;">
+                        Eigene CV-Datei hochladen (optional)
+                    </summary>
+                    <div class="file-upload" style="margin-top: 10px;">
+                        <label for="masterCV" class="upload-label">
+                            <span>Andere Master-CV JSON-Datei laden</span>
+                            <input type="file" id="masterCV" accept=".json,application/json">
+                        </label>
+                        <button id="loadSample" class="btn-secondary" type="button">Standard laden</button>
+                    </div>
+                </details>
             </section>
 
             <section class="input-section">
                 <h2>2. Stellenanzeige</h2>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">
+                    Fügen Sie hier den vollständigen Text der Stellenanzeige ein:
+                </p>
                 <textarea
                     id="jobDescription"
-                    placeholder="Hier den vollständigen Text der Stellenanzeige einfügen..."
-                    rows="10"
+                    placeholder="Stellenanzeige hier einfügen...
+
+Beispiel:
+Frontend-Entwickler (m/w/d) React / Next.js
+TechSolutions GmbH, Siegen
+
+Ihre Aufgaben:
+• Entwicklung von React-Anwendungen
+• ...
+
+Kontakt: bewerbung@example.de"
+                    rows="12"
                 ></textarea>
             </section>
 
             <section class="input-section">
                 <h2>3. Bewerbungsfoto</h2>
-                <input type="file" id="userPhoto" accept="image/*">
-                <label for="userPhoto" class="upload-label compact-upload">
-                    <span>Foto laden oder gespeichertes Foto verwenden</span>
-                </label>
                 <div id="photoPreview"></div>
+                <details style="margin-top: 10px;">
+                    <summary style="cursor: pointer; color: #666; font-size: 0.9rem;">
+                        Anderes Foto hochladen (optional)
+                    </summary>
+                    <div style="margin-top: 10px;">
+                        <input type="file" id="userPhoto" accept="image/*">
+                        <label for="userPhoto" class="upload-label compact-upload">
+                            <span>Anderes Foto auswählen</span>
+                        </label>
+                    </div>
+                </details>
             </section>
 
             <div class="action-section">

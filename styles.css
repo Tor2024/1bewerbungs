@@ -317,3 +317,24 @@ input[type="file"] {
         overflow-x: auto;
     }
 }
+
+details {
+    margin-top: 10px;
+}
+
+summary {
+    cursor: pointer;
+    color: #666;
+    font-size: 0.9rem;
+    padding: 8px 0;
+    user-select: none;
+}
+
+summary:hover {
+    color: var(--primary-color);
+}
+
+details[open] summary {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
