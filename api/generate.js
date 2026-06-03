@@ -44,13 +44,34 @@ module.exports = async (req, res) => {
         }
 
         const data = await response.json();
-        let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+        let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        // Check if we got a response
+        if (!text) {
+            console.error('No text in Gemini response:', data);
+            return res.status(500).json({
+                error: 'Gemini returned empty response',
+                fullResponse: data,
+                hint: 'API may have blocked the request or model is unavailable'
+            });
+        }
         
         console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
         console.log(text.substring(0, 2000));
         console.log('=== END RAW RESPONSE ===');
         
-        // Clean any markdown if present (but we told AI not to use it)
+        // Check if response starts with JSON
+        if (!text.trim().startsWith('{')) {
+            console.error('Response does not start with JSON!');
+            console.error('Response starts with:', text.substring(0, 200));
+            return res.status(500).json({
+                error: 'Gemini did not return JSON',
+                responsePreview: text.substring(0, 500),
+                hint: 'AI returned text instead of JSON. Possible safety block or refusal.'
+            });
+        }
+        
+        // Clean any markdown if present
         text = text.trim();
         if (text.startsWith('```')) {
             text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
