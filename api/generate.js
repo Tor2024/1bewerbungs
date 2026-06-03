@@ -1,12 +1,9 @@
-// Only working model
-const GEMINI_MODEL = 'gemini-2.5-flash';
-
 const API_KEYS = (process.env.GEMINI_API_KEY || '')
     .split(',')
     .map(key => key.trim())
     .filter(Boolean);
 
-const GEMINI_MODELS = ['gemini-2.5-flash'];
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 let currentKeyIndex = 0;
 
@@ -14,60 +11,76 @@ function getNextApiKey() {
     if (API_KEYS.length === 0) {
         throw new Error('GEMINI_API_KEY is not configured');
     }
-
     const apiKey = API_KEYS[currentKeyIndex];
     currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
     return apiKey;
 }
 
 function buildPrompt(masterCV, jobDescription) {
-    return `### ROLE
-Ты — экспертный HR-инженер и архитектор документов для немецкого рынка труда. Твоя задача: на основе Master-CV пользователя и конкретной вакансии сгенерировать два адаптивных документа (Anschreiben и Lebenslauf).
-
-### DATA CONTEXT
-- Master-CV (из LocalStorage): Содержит полный опыт пользователя, включая руководство в логистике и навыки Web Development (React, Next.js).
-- Job Description (Input): Текст вакансии со всеми деталями.
-- User Constraints: Уровень немецкого B1, проживание в Кройцтале, цель — работа разработчиком.
-
-### MASTER-CV
-${JSON.stringify(masterCV, null, 2)}
-
-### JOB DESCRIPTION
-${jobDescription}
-
-### PRINCIPLES OF ADAPTATION (CRITICAL)
-1. Anti-Overqualified: Смягчай управленческий бэкграунд. Вместо "Director/Head of" используй "Projektleiter" или "Senior Specialist". В тексте письма объясни, что опыт руководства дает дисциплину и понимание бизнес-целей, но страсть и фокус пользователя сейчас — hands-on разработка.
-2. Entity Extraction: Найди в вакансии название компании, адрес и контактное лицо. Если имя не найдено, используй "Sehr geehrte Damen und Herren".
-3. No AI Patterns: Запрещено использовать фразы-клише: "Ich hoffe, diese E-Mail findet Sie gut", "Ich bin der ideale Kandidat", "In der heutigen digitalen Welt". Пиши сухим, деловым, немецким стилем.
-4. Language Match: Текст должен быть на идеальном немецком, но синтаксически доступным для уровня B1-B2.
-
-### OUTPUT FORMAT (JSON ONLY)
-Верни строго валидный JSON объект. Не добавляй markdown, комментарии или текст вне JSON.
-
-{
-  "contact_person": "Имя найденного контакта или null",
-  "company_name": "Название компании",
-  "anschreiben_html": "HTML-строка (A4, DIN 5008 стандарт). Чистый CSS в тегах <style>.",
-  "lebenslauf_html": "HTML-строка (A4, современный 2-колоночный дизайн). Используй плейсхолдер [PHOTO_PATH] для фото из LocalStorage.",
-  "check_translation_ru": {
-    "summary": "Краткий смысл письма (о чем мы просим и как оправдываем опыт начальника).",
-    "tone_check": "Описание тона письма на русском."
-  }
+    return JSON.stringify({
+        role: "You are an expert HR engineer for the German job market.",
+        task: "Generate two adaptive documents (Anschreiben and Lebenslauf) based on Master-CV and job description.",
+        masterCV: masterCV,
+        jobDescription: jobDescription,
+        constraints: "German level B1, location Kreuztal, goal - developer position",
+        principles: {
+            antiOverqualified: "Soften management background. Use 'Projektleiter' instead of 'Director'. Explain that management experience provides discipline, but passion is hands-on development.",
+            entityExtraction: "Find company name, address and contact person from job description.",
+            noAIPatterns: "Avoid cliches. Write in dry, business German style.",
+            languageMatch: "Perfect German, syntactically accessible for B1-B2 level."
+        },
+        outputFormat: {
+            contact_person: "Found contact name or null",
+            company_name: "Company name",
+            anschreiben_html: "HTML string (A4, DIN 5008 standard). Clean CSS in style tags.",
+            lebenslauf_html: "HTML string (A4, modern 2-column design). Use [PHOTO_PATH] placeholder for photo.",
+            check_translation_ru: {
+                summary: "Brief meaning in Russian",
+                tone_check: "Tone description in Russian"
+            }
+        },
+        htmlRequirements: {
+            fonts: "Inter, Roboto or Arial",
+            colors: "Dark blue #1e3a8a or graphite #374151",
+            printFriendly: true,
+            noScripts: true,
+            anschreibenFormat: "DIN 5008: sender, recipient, date, subject, greeting, text, signature",
+            lebenslaufFormat: "Modern two-column document",
+            noInventedFacts: true
+        }
+    });
 }
 
-### HTML/CSS REQUIREMENTS
-- Используй Inter, Roboto или Arial.
-- Цветовая гамма: сдержанный темно-синий #1e3a8a или графитовый #374151 для акцентов.
-- Верстка должна быть print-friendly и помещаться на A4.
-- Не добавляй script, внешние ресурсы, формы или интерактивный код.
-- Anschreiben должен быть по DIN 5008 насколько возможно: отправитель, получатель, дата, тема, обращение, текст, подпись.
-- Lebenslauf должен быть современным двухколоночным документом, но без чрезмерных украшений.
-- Не выдумывай факты, которых нет в Master-CV или вакансии.`;
-}
+async function callGemini(prompt) {
+    const apiKey = getNextApiKey();
+    
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: `Generate German job application documents based on this data. Return ONLY valid JSON without markdown:\n\n${prompt}` }]
+                }],
+                generationConfig: {
+                    temperature: 0.4,
+                    maxOutputTokens: 8000
+                }
+            })
+        }
+    );
 
-function parseJsonResponse(text) {
-    if (!text || typeof text !== 'string') {
-        throw new Error('Gemini returned an empty response');
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error?.message || `HTTP ${response.status}`);
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+        throw new Error('Empty response from Gemini');
     }
 
     const cleanText = text
@@ -77,81 +90,6 @@ function parseJsonResponse(text) {
         .replace(/\s*```$/i, '');
 
     return JSON.parse(cleanText);
-}
-
-function validateGeneratedResult(result) {
-    const requiredStringFields = ['company_name', 'anschreiben_html', 'lebenslauf_html'];
-
-    for (const field of requiredStringFields) {
-        if (typeof result[field] !== 'string' || result[field].trim() === '') {
-            throw new Error(`Gemini response is missing ${field}`);
-        }
-    }
-
-    if (!result.check_translation_ru || typeof result.check_translation_ru !== 'object') {
-        throw new Error('Gemini response is missing check_translation_ru');
-    }
-
-    if (typeof result.check_translation_ru.summary !== 'string') {
-        throw new Error('Gemini response is missing check_translation_ru.summary');
-    }
-
-    if (typeof result.check_translation_ru.tone_check !== 'string') {
-        throw new Error('Gemini response is missing check_translation_ru.tone_check');
-    }
-}
-
-async function callGemini(prompt) {
-    const errors = [];
-
-    for (const model of GEMINI_MODELS) {
-        try {
-            const apiKey = getNextApiKey();
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        systemInstruction: {
-                            parts: [{
-                                text: 'Return only valid JSON. Never include markdown fences or explanatory text.'
-                            }]
-                        },
-                        contents: [{
-                            role: 'user',
-                            parts: [{ text: prompt }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.35,
-                            maxOutputTokens: 12000,
-                            responseMimeType: 'application/json'
-                        }
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                errors.push(`${model}: ${data.error?.message || response.statusText}`);
-                continue;
-            }
-
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            const parsed = parseJsonResponse(text);
-            validateGeneratedResult(parsed);
-
-            return {
-                ...parsed,
-                model_used: model
-            };
-        } catch (error) {
-            errors.push(`${model}: ${error.message}`);
-        }
-    }
-
-    throw new Error(`All Gemini models failed. ${errors.join(' | ')}`);
 }
 
 module.exports = async function handler(req, res) {
@@ -188,7 +126,10 @@ module.exports = async function handler(req, res) {
         const prompt = buildPrompt(masterCV, jobDescription.trim());
         const result = await callGemini(prompt);
 
-        return res.status(200).json(result);
+        return res.status(200).json({
+            ...result,
+            model_used: GEMINI_MODEL
+        });
     } catch (error) {
         console.error('Generation error:', error);
         return res.status(500).json({
