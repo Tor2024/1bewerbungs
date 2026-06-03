@@ -264,22 +264,27 @@ body {
 
 Structure:
 1. **Sender block** (right-aligned, top):
+   **CRITICAL:** ALWAYS include full contact information:
    ${pi.name}
    ${pi.address}
-   Phone: ${pi.phone}
-   Email: ${pi.email}
+   Tel: ${pi.phone}
+   E-Mail: ${pi.email}
+   
+   Format small (8-9pt), right-aligned or as compact header
 
 2. **Recipient block** (left-aligned, below sender):
    [Company name from job posting]
    [Contact person if found]
    [Address from job posting]
 
-3. **Date:** (right-aligned) Format: Kreuztal, [current date in German format]
+3. **Date:** (right-aligned) Format: Kreuztal, [CURRENT DATE in German format DD. MMMM YYYY]
+   **IMPORTANT:** Use actual current date when generating (e.g., "Kreuztal, 3. Juni 2026")
 
 4. **Subject line:** Bewerbung als [Position from job posting]
 
 5. **Salutation:** 
-   - If contact person found: "Sehr geehrte/r [Herr/Frau] [Name],"
+   - **If contact person found:** "Sehr geehrte/r [Herr/Frau] [Nachname],"
+   - **CRITICAL:** Always use contact person if available! Check contact_person field
    - Otherwise: "Sehr geehrte Damen und Herren,"
 
 6. **Body (3-4 paragraphs) - ADAPT TO POSITION TYPE:**
@@ -494,8 +499,10 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
   "anschreiben_html": "complete HTML document with inline CSS for Anschreiben (DIN 5008 format, A4 ready, print-optimized)",
   "lebenslauf_html": "complete HTML document with inline CSS for Lebenslauf (modern design, photo placeholder [PHOTO_PATH], A4 ready, print-optimized)",
   "check_translation_ru": {
-    "summary": "краткое описание сути письма на русском (о чем просим, как обосновали опыт)",
-    "tone_check": "описание тона письма на русском (например: 'уверенный технарь' или 'надежный работник склада')"
+    "summary": "ДЕТАЛЬНОЕ описание письма на русском: какую должность просим, как объяснили переход из логистики в IT/разработку, какие ключевые навыки подчеркнули, как обосновали опыт руководителя для позиции разработчика/работника склада/другой должности. Минимум 3-4 предложения.",
+    "tone_check": "описание тона письма на русском (например: 'уверенный технарь с управленческим опытом' или 'надежный работник склада с опытом руководства' или 'организованный администратор')",
+    "lebenslauf_summary": "Краткое описание CV на русском: какие разделы включены, как представлен опыт (какие должности выделены), какие проекты показаны, общая структура. 2-3 предложения.",
+    "key_adaptations": "Ключевые адаптации для этой вакансии на русском: что подчеркнули, что смягчили, какую стратегию использовали (Developer/Logistics/Admin/IT Support/General). 2-3 пункта."
   }
 }
 
@@ -513,18 +520,30 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 9. **No JavaScript:** Pure HTML+CSS only
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
+**CRITICAL JSON REQUIREMENTS:**
+- Escape all quotes in HTML: use \\" for quotes inside strings
+- Escape all backslashes: use \\
+- No line breaks in JSON string values - use spaces instead
+- HTML must be one continuous string without literal line breaks
+- All newlines in HTML must be escaped or removed
+- Test JSON validity before returning
+
 ### CRITICAL RULES
 
 1. **DETECT POSITION TYPE FIRST** - Read job posting carefully and identify: Web Developer / Logistics / Administrative / IT Support / General
 2. **APPLY CORRECT STRATEGY** - Use corresponding adaptation strategy for that position type
 3. **USE RELEVANT DATA** - Select most relevant experience, skills, and projects for the position type
 4. **ADAPT JOB TITLES** - Soften or emphasize management background based on position type
-5. **EXTRACT CONTACT INFO** - Company name, contact person, email, address from job posting
-6. **NO AI CLICHÉS** - Avoid forbidden phrases, write in business German style
-7. **VALID JSON ONLY** - Return only JSON, no markdown, no extra text
-8. **EMPHASIZE INTEGRATION** - Always mention: since 2022 in Germany, B2 German, work permit §24, immediate availability
-9. **SHOW FLEXIBILITY** - Willing to start with Probezeit/Praktikum, salary negotiable (18-20 EUR/h)
-10. **PRINT-READY** - Make documents professional, A4 format, ready to send
+5. **EXTRACT CONTACT INFO** - Company name, contact person (with Herr/Frau), email, address from job posting
+6. **USE CONTACT PERSON** - If contact_person found, ALWAYS use in salutation (Sehr geehrte/r Herr/Frau [Name])
+7. **INCLUDE FULL CONTACT DATA** - ALWAYS include phone (${pi.phone}) and full address (${pi.address}) in sender block
+8. **CURRENT DATE** - Use actual current date in German format (e.g., "Kreuztal, 3. Juni 2026")
+9. **NO AI CLICHÉS** - Avoid forbidden phrases, write in business German style
+10. **VALID JSON ONLY** - Return only JSON, escape quotes properly, no markdown, no extra text, no line breaks in strings
+11. **DETAILED RUSSIAN CHECK** - Provide detailed summary (3-4 sentences), lebenslauf summary, key adaptations
+12. **EMPHASIZE INTEGRATION** - Always mention: since 2022 in Germany, B2 German, work permit §24, immediate availability
+13. **SHOW FLEXIBILITY** - Willing to start with Probezeit/Praktikum, salary negotiable (18-20 EUR/h)
+14. **PRINT-READY** - Make documents professional, A4 format, ready to send
 
 Generate the documents now using the ADAPTIVE strategy based on the job posting type.`;
 }

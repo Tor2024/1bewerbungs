@@ -328,14 +328,30 @@ function validateApplicationResult(result) {
 function renderApplication(result) {
     elements.anschreibenPreview.srcdoc = sanitizeHtml(result.anschreiben_html);
     elements.lebenslaufPreview.srcdoc = sanitizeHtml(getLebenslaufHtmlWithPhoto());
-    elements.checkSummary.textContent = result.check_translation_ru?.summary || '';
-    elements.checkTone.textContent = result.check_translation_ru?.tone_check || '';
+    
+    // Render Russian check information
+    const checkRu = result.check_translation_ru || {};
+    elements.checkSummary.textContent = checkRu.summary || 'Не доступно';
+    elements.checkTone.textContent = checkRu.tone_check || 'Не доступно';
+    
+    // Add Lebenslauf summary if available
+    const lebenslaufEl = document.getElementById('checkLebenslauf');
+    if (lebenslaufEl) {
+        lebenslaufEl.textContent = checkRu.lebenslauf_summary || 'Не доступно';
+    }
+    
+    // Add key adaptations if available
+    const adaptationsEl = document.getElementById('checkAdaptations');
+    if (adaptationsEl) {
+        adaptationsEl.textContent = checkRu.key_adaptations || 'Не доступно';
+    }
+    
     elements.modelInfo.textContent = result.model_used ? `Modell: ${result.model_used}` : '';
     elements.checkData.innerHTML = [
-        `Firma: ${result.company_name || 'nicht erkannt'}`,
-        `Kontakt: ${result.contact_person || 'nicht erkannt'}`,
-        `E-Mail: ${result.contact_email || 'nicht erkannt'}`
-    ].map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        `<strong>Firma:</strong> ${result.company_name || 'nicht erkannt'}`,
+        `<strong>Kontaktperson:</strong> ${result.contact_person || 'nicht erkannt'}`,
+        `<strong>E-Mail:</strong> ${result.contact_email || 'nicht erkannt'}`
+    ].map(item => `<li>${item}</li>`).join('');
     elements.outputSection.hidden = false;
 }
 
