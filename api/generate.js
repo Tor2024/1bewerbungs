@@ -82,16 +82,6 @@ module.exports = async (req, res) => {
             const result = JSON.parse(text);
             console.log('✓ JSON parsed successfully');
             
-            // Decode base64 HTML if present
-            if (result.anschreiben_html_base64) {
-                result.anschreiben_html = Buffer.from(result.anschreiben_html_base64, 'base64').toString('utf-8');
-                delete result.anschreiben_html_base64;
-            }
-            if (result.lebenslauf_html_base64) {
-                result.lebenslauf_html = Buffer.from(result.lebenslauf_html_base64, 'base64').toString('utf-8');
-                delete result.lebenslauf_html_base64;
-            }
-            
             return res.status(200).json(result);
         } catch (parseError) {
             console.error('✗ JSON Parse Error:', parseError.message);
@@ -128,28 +118,30 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-**TO AVOID ALL QUOTE ESCAPING ISSUES:**
+**IMPORTANT:** Return ONLY valid JSON. No markdown blocks, no explanations, no backticks.
 
-Return JSON where HTML is BASE64 encoded:
+**HTML ATTRIBUTE RULES:**
+- Use ONLY single quotes (') for ALL HTML attributes
+- NEVER use double quotes (") in HTML
+- Example CORRECT: <div class='header' style='color: blue'>
+- Example WRONG: <div class="header" style="color: blue">
 
-```json
+**JSON Structure:**
 {
-  "company_name": "Firma",
-  "contact_person": "Name",
-  "contact_email": "email",
-  "anschreiben_html_base64": "BASE64_ENCODED_HTML_HERE",
-  "lebenslauf_html_base64": "BASE64_ENCODED_HTML_HERE",
+  "company_name": "string",
+  "contact_person": "string or null",
+  "contact_email": "string or null",
+  "anschreiben_html": "complete HTML document with single quotes in attributes",
+  "lebenslauf_html": "complete HTML document with single quotes in attributes",
   "check_translation_ru": {
-    "summary": "text",
-    "tone_check": "text",
-    "lebenslauf_summary": "text",
-    "key_adaptations": "text"
+    "summary": "string",
+    "tone_check": "string",
+    "lebenslauf_summary": "string",
+    "key_adaptations": "string"
   }
 }
-```
 
-Encode your complete HTML documents using base64 encoding.
-This eliminates ALL quote/escape issues!
+Start your response with { immediately!
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
@@ -602,11 +594,12 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- NO markdown wrapper, NO ```json
-- Start with { immediately
-- Use single quotes ' for all HTML attributes
-- Put HTML on one continuous line
-- Escape any literal quotes in text content
+- NO markdown wrapper, NO ```json blocks
+- Start response with { immediately (first character must be opening brace)
+- Use ONLY single quotes ' for ALL HTML attributes (NEVER double quotes ")
+- Example: <div class='header'> NOT <div class="header">
+- If you accidentally use double quotes in HTML, you will break the JSON
+- Put entire HTML document as single string value (escape line breaks as \\n if needed)
 
 ### CRITICAL RULES
 
