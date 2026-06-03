@@ -81,6 +81,17 @@ module.exports = async (req, res) => {
         try {
             const result = JSON.parse(text);
             console.log('✓ JSON parsed successfully');
+            
+            // Decode base64 HTML if present
+            if (result.anschreiben_html_base64) {
+                result.anschreiben_html = Buffer.from(result.anschreiben_html_base64, 'base64').toString('utf-8');
+                delete result.anschreiben_html_base64;
+            }
+            if (result.lebenslauf_html_base64) {
+                result.lebenslauf_html = Buffer.from(result.lebenslauf_html_base64, 'base64').toString('utf-8');
+                delete result.lebenslauf_html_base64;
+            }
+            
             return res.status(200).json(result);
         } catch (parseError) {
             console.error('✗ JSON Parse Error:', parseError.message);
@@ -117,15 +128,28 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-Return ONLY the JSON object, nothing else. No markdown, no explanations.
+**TO AVOID ALL QUOTE ESCAPING ISSUES:**
 
-**CRITICAL RULES:**
-1. Use \\\" (backslash quote) for ANY quote inside HTML strings
-2. OR use single quotes ' for HTML attributes (safer!)
-3. Put entire HTML on ONE line (no line breaks)
-4. Example: "html": "<html><body><p class='text'>Content</p></body></html>"
+Return JSON where HTML is BASE64 encoded:
 
-Start your response with { and end with }
+```json
+{
+  "company_name": "Firma",
+  "contact_person": "Name",
+  "contact_email": "email",
+  "anschreiben_html_base64": "BASE64_ENCODED_HTML_HERE",
+  "lebenslauf_html_base64": "BASE64_ENCODED_HTML_HERE",
+  "check_translation_ru": {
+    "summary": "text",
+    "tone_check": "text",
+    "lebenslauf_summary": "text",
+    "key_adaptations": "text"
+  }
+}
+```
+
+Encode your complete HTML documents using base64 encoding.
+This eliminates ALL quote/escape issues!
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
