@@ -6,24 +6,43 @@
     "phone": "015237237407",
     "email": "kalchenko2022@gmail.com",
     "photo": "photo.jpg",
-    "portfolio": "https://ok-studio-umber.vercel.app"
+    "portfolio": "https://ok-studio-umber.vercel.app",
+    "workPermit": "Aufenthaltserlaubnis nach § 24 AufenthG",
+    "availability": "Vollzeit, sofort verfügbar",
+    "familyStatus": "verheiratet, zwei Kinder (11 und 14 Jahre)",
+    "relocation": "Bei guten Konditionen deutschlandweit möglich"
   },
   "profile": {
-    "de": "Erfahrener Experte in Datenverarbeitung, Systemtechnik und Zolldeklaration. Spezialisiert auf Marketing und Import von italienischen Möbeln. Profunde Kenntnisse in Logistik, Zollvorschriften und internationalen Geschäftsbeziehungen.",
-    "currentGoal": "Web Development Position (React, Next.js)",
+    "de": "Erfahrener Experte in Datenverarbeitung, Systemtechnik und Logistikmanagement mit umfassender Projekterfahrung. Seit 2022 in Deutschland, spezialisiert auf moderne Webentwicklung mit React und Next.js. Selbstständiges Lernen durch AI-gestützte Methoden und praktische Projektarbeit. Kombiniert analytisches Denken aus dem Logistikbereich mit technischer Expertise für effiziente Softwarelösungen.",
+    "currentGoal": "Einstieg in die Web Development oder IT-Branche (offen für verschiedene Positionen)",
     "highlights": [
-      "Erfahrener Import-Export Manager und Zolldeklarant mit umfassendem Fachwissen in internationalen Handelsvorschriften.",
-      "Erfolgreich in der Optimierung von Lieferketten und der Sicherstellung reibungsloser Zollabfertigung.",
-      "Zeugenorientiertes Kommunikationstalent."
+      "Umfassende Erfahrung im Projektmanagement und in der Optimierung komplexer Prozesse",
+      "Selbstständig erlernte moderne Webentwicklung (React, Next.js, AI-Integration)",
+      "Praktische Erfahrung durch zahlreiche eigene Projekte und Portfolio-Arbeiten",
+      "Starke analytische Fähigkeiten und systematische Arbeitsweise",
+      "Deutschkenntnisse B2-Niveau (Zertifikat B1, Kurs B2 abgeschlossen)"
     ]
   },
   "languages": {
+    "Deutsch": "B2-Niveau (Zertifikat B1, Kurs B2 abgeschlossen)",
     "Ukrainisch": "Muttersprache",
-    "English": "Grundkenntnisse",
     "Russisch": "Muttersprache",
-    "Deutsch": "Zertifikat B1"
+    "English": "Grundkenntnisse"
   },
   "experience": [
+    {
+      "position": "Selbstständige Weiterbildung und Projektarbeit",
+      "company": "Freiberuflich",
+      "location": "Kreuztal, Deutschland",
+      "period": "Feb 2022 — heute",
+      "responsibilities": [
+        "Intensive Weiterbildung in moderner Webentwicklung (React, Next.js, JavaScript) durch selbstgesteuertes Lernen mit AI-Unterstützung",
+        "Entwicklung zahlreicher praktischer Projekte zur Vertiefung der Kenntnisse (Portfolio unter ok-studio-umber.vercel.app)",
+        "Erstellung eines AI-gestützten Bewerbungsgenerators mit Google Gemini API und Vercel Serverless Functions",
+        "Abschluss Deutschkurs B2-Niveau zur Integration in den deutschen Arbeitsmarkt",
+        "Spezialisierung auf Full-Stack-Entwicklung mit Fokus auf moderne Frontend-Technologien und AI-Integration"
+      ]
+    },
     {
       "position": "Stellvertretender Direktor des Zollterminals",
       "company": "Grand Wind GmbH",
@@ -93,6 +112,26 @@
       "period": "Sep 1986 — Mai 1996"
     }
   ],
+  "furtherEducation": [
+    {
+      "course": "Deutschkurs B2-Niveau",
+      "institution": "Sprachschule in Deutschland",
+      "period": "2022 — 2026",
+      "certificate": "Zertifikat B1 vorhanden, B2-Kurs abgeschlossen"
+    },
+    {
+      "course": "Web Development (React, Next.js, JavaScript)",
+      "institution": "Online-Kurse und selbstgesteuertes Lernen",
+      "period": "2022 — heute",
+      "certificate": "Keine formelle Zertifizierung, Portfolio als Nachweis"
+    },
+    {
+      "course": "AI-Integration und moderne Entwicklungsmethoden",
+      "institution": "Selbststudium mit praktischen Projekten",
+      "period": "2023 — heute",
+      "certificate": "Praktische Projekte als Nachweis (Bewerbungsgenerator mit Google Gemini API)"
+    }
+  ],
   "skills": {
     "technical": [
       "Logistik",
@@ -104,21 +143,37 @@
       "Dokumentation",
       "Verhandlung",
       "Marketing",
-      "Import-Manager",
-      "Zolldeklarant",
+      "Projektmanagement",
+      "Prozessoptimierung",
       "Systemtechnik"
     ],
     "webDevelopment": [
-      "React",
-      "Next.js",
-      "JavaScript",
-      "HTML/CSS",
-      "Webdesign",
-      "3D-Grafikprogramme",
-      "Videobearbeitung"
+      "React (Hooks, Context API, moderne Patterns)",
+      "Next.js (App Router, Server Components, API Routes)",
+      "JavaScript (ES6+, async/await, Promises)",
+      "HTML5 & CSS3 (Responsive Design, Flexbox, Grid)",
+      "Node.js & npm/yarn",
+      "Git & GitHub",
+      "Vercel Deployment",
+      "API Integration (REST, Google Gemini AI)",
+      "Serverless Functions",
+      "AI-Integration in Webanwendungen"
+    ],
+    "tools": [
+      "VS Code",
+      "Git/GitHub",
+      "Adobe Photoshop",
+      "3D Studio MAX",
+      "Videobearbeitung (Pinnacle Studio, Flex Clip)",
+      "Microsoft Office (Word, Excel, PowerPoint)"
     ]
   },
   "projects": [
+    {
+      "title": "KI-gestützter Bewerbungsgenerator",
+      "description": "Entwicklung einer Web-Anwendung zur automatischen Generierung von personalisierten deutschen Bewerbungsunterlagen (Anschreiben und Lebenslauf) unter Verwendung von Google Gemini AI. Die Anwendung analysiert Stellenanzeigen, extrahiert relevante Informationen und passt den Master-CV automatisch an die jeweilige Position an. Implementiert mit Vercel Serverless Functions, API-Load-Balancing und modernem Frontend.",
+      "technologies": "JavaScript, Node.js, Google Gemini API, Vercel, HTML/CSS, AI-Integration"
+    },
     {
       "title": "OK Studio — Web-Design & Relaunch für den Mittelstand",
       "description": "Professionelles Webdesign-Portfolio mit mehreren realisierten Projekten für mittelständische Unternehmen. Spezialisierung auf moderne, responsive Webseiten mit Fokus auf Benutzerfreundlichkeit und Performance. Umfasst Projekte für verschiedene Branchen mit kompletten Design- und Entwicklungslösungen.",
@@ -145,5 +200,5 @@
     "Ich habe das Zollterminal des Lieferorts, das Zolllager, die Bereitstellung von Zollmaklerdiensten und die Logistik von Europa über China und die Türkei bis in die USA verwaltet, einschließlich der schlüsselfertigen Lieferung von Waren."
   ],
   "driverLicense": "Kategorie B",
-  "hobbies": "Begeistert von Webdesign und der Erstellung von Websites, arbeite auch mit zahlreichen Design- und 3D-Grafikprogrammen sowie Videobearbeitung und -montage."
+  "hobbies": "Begeistert von Webdesign und der Erstellung von Websites, arbeite auch mit zahlreichen Design- und 3D-Grafikprogrammen sowie Videobearbeitung und -montage. Besonders interessiert an der Integration von künstlicher Intelligenz in reale Projekte zur Arbeitsoptimierung in verschiedenen Bereichen."
 }

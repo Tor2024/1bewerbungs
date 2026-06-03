@@ -84,6 +84,10 @@ You are an expert HR engineer and document architect for the German job market. 
 - Phone: ${pi.phone}
 - Email: ${pi.email}
 ${pi.portfolio ? `- Portfolio: ${pi.portfolio}` : ''}
+${pi.workPermit ? `- Work Permit: ${pi.workPermit}` : ''}
+${pi.availability ? `- Availability: ${pi.availability}` : ''}
+${pi.familyStatus ? `- Family Status: ${pi.familyStatus}` : ''}
+${pi.relocation ? `- Relocation: ${pi.relocation}` : ''}
 
 **Languages:**
 ${Object.entries(cv.languages || {}).map(([lang, level]) => `- ${lang}: ${level}`).join('\n')}
@@ -111,11 +115,22 @@ ${i + 1}. ${edu.degree}
 ${edu.details ? `   Details:\n${edu.details.map(d => `   - ${d}`).join('\n')}` : ''}
 `).join('\n')}
 
+**Further Education & Certifications:**
+${(cv.furtherEducation || []).map((edu, i) => `
+${i + 1}. ${edu.course}
+   Institution: ${edu.institution}
+   Period: ${edu.period}
+   ${edu.certificate ? `Certificate: ${edu.certificate}` : ''}
+`).join('\n')}
+
 **Technical Skills:**
 ${(cv.skills?.technical || []).join(', ')}
 
 **Web Development Skills:**
 ${(cv.skills?.webDevelopment || []).join(', ')}
+
+**Tools & Software:**
+${(cv.skills?.tools || []).join(', ')}
 
 **Notable Projects:**
 ${(cv.projects || []).map((proj, i) => `
