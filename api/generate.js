@@ -223,6 +223,45 @@ ${jobDescription}
 
 ### ANSCHREIBEN REQUIREMENTS (DIN 5008)
 
+**IMPORTANT:** Return complete HTML document with inline CSS. No external stylesheets.
+
+**HTML Structure Example:**
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Arial', sans-serif; 
+  font-size: 11pt; 
+  line-height: 1.5; 
+  color: #333;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 20mm 25mm;
+}
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body { padding: 0; }
+}
+.sender { font-size: 8pt; margin-bottom: 3mm; color: #666; }
+.recipient { margin-bottom: 8mm; }
+.date { text-align: right; margin-bottom: 10mm; }
+.subject { font-weight: bold; margin-bottom: 8mm; }
+.salutation { margin-bottom: 8mm; }
+.paragraph { margin-bottom: 6mm; text-align: justify; }
+.closing { margin-top: 10mm; }
+.signature { margin-top: 15mm; }
+</style>
+</head>
+<body>
+<!-- Full content here -->
+</body>
+</html>
+```
+
 Structure:
 1. **Sender block** (right-aligned, top):
    ${pi.name}
@@ -292,6 +331,105 @@ Structure:
 
 ### LEBENSLAUF REQUIREMENTS
 
+**IMPORTANT:** Return complete HTML document with inline CSS. Include photo placeholder.
+
+**HTML Structure Example:**
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Arial', sans-serif; 
+  font-size: 10pt; 
+  line-height: 1.4; 
+  color: #333;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 15mm 20mm;
+}
+@media print {
+  @page { size: A4; margin: 10mm; }
+  body { padding: 0; }
+}
+.header { 
+  display: flex; 
+  align-items: flex-start; 
+  margin-bottom: 15mm;
+  border-bottom: 3px solid #1e3a8a;
+  padding-bottom: 10mm;
+}
+.photo { 
+  width: 35mm; 
+  height: 45mm; 
+  border: 1px solid #ddd; 
+  border-radius: 2px;
+  margin-right: 15mm;
+  object-fit: cover;
+}
+.header-info { flex: 1; }
+.name { 
+  font-size: 20pt; 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 3mm;
+}
+.contact { font-size: 9pt; color: #666; }
+.contact-item { margin-bottom: 2mm; }
+.section { margin-bottom: 8mm; }
+.section-title { 
+  font-size: 13pt; 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 4mm;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 2mm;
+}
+.entry { margin-bottom: 5mm; }
+.entry-header { 
+  display: flex; 
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 1mm;
+}
+.entry-title { color: #1e3a8a; }
+.entry-period { color: #666; font-size: 9pt; }
+.entry-company { color: #666; font-style: italic; margin-bottom: 2mm; }
+.entry-content { margin-left: 5mm; }
+.entry-content li { margin-bottom: 1mm; }
+.skills-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 5mm; 
+}
+.skill-category { margin-bottom: 3mm; }
+.skill-category-title { 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 2mm; 
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="[PHOTO_PATH]" alt="Bewerbungsfoto" class="photo">
+  <div class="header-info">
+    <div class="name">NAME HERE</div>
+    <div class="contact">
+      <div class="contact-item">📍 Address</div>
+      <div class="contact-item">📞 Phone</div>
+      <div class="contact-item">✉ Email</div>
+      <div class="contact-item">🌐 Portfolio/GitHub</div>
+    </div>
+  </div>
+</div>
+<!-- Sections here -->
+</body>
+</html>
+```
+
 Modern 2-column layout:
 - **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info (including portfolio and GitHub for tech positions), languages, core skills
 - **Right column (70%):** Experience (adapt titles based on position type), education, projects (select most relevant)
@@ -324,6 +462,26 @@ Modern 2-column layout:
 - Color scheme: Dark blue (#1e3a8a) or graphite (#374151) for accents
 - Clean, professional design
 - Print-friendly (A4 page)
+- Add proper CSS for @media print
+- Ensure photo displays correctly at ~35-40mm width in print
+
+**CSS Requirements for Print:**
+```css
+@media print {
+  body { margin: 0; padding: 0; }
+  @page { size: A4; margin: 15mm; }
+  .no-print { display: none; }
+  img { max-width: 100%; page-break-inside: avoid; }
+}
+```
+
+**Photo Integration:**
+- Photo should be in top-left of CV (2-column layout)
+- Size: approximately 35mm x 45mm (passport photo size)
+- Border: subtle 1px solid #ddd
+- Border-radius: 2px for professional look
+- Use img tag with [PHOTO_PATH] as src
+- Ensure photo is visible in both screen and print
 
 ### OUTPUT FORMAT
 
@@ -333,13 +491,27 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
   "company_name": "extracted company name from job posting",
   "contact_person": "extracted contact name or null",
   "contact_email": "extracted email or null",
-  "anschreiben_html": "complete HTML document with inline CSS for Anschreiben (DIN 5008)",
-  "lebenslauf_html": "complete HTML document with inline CSS for Lebenslauf (use [PHOTO_PATH] for photo)",
+  "anschreiben_html": "complete HTML document with inline CSS for Anschreiben (DIN 5008 format, A4 ready, print-optimized)",
+  "lebenslauf_html": "complete HTML document with inline CSS for Lebenslauf (modern design, photo placeholder [PHOTO_PATH], A4 ready, print-optimized)",
   "check_translation_ru": {
-    "summary": "краткое описание сути письма на русском (о чем просим, как обосновали опыт начальника)",
-    "tone_check": "описание тона письма на русском (например: 'уверенный технарь, уважающий иерархию')"
+    "summary": "краткое описание сути письма на русском (о чем просим, как обосновали опыт)",
+    "tone_check": "описание тона письма на русском (например: 'уверенный технарь' или 'надежный работник склада')"
   }
 }
+
+**HTML REQUIREMENTS:**
+1. **Complete documents:** Include <!DOCTYPE html>, <html>, <head>, <body>
+2. **Inline CSS:** All styles in <style> tag in <head>, no external CSS
+3. **Print-ready:** Include @media print with proper A4 sizing
+4. **Photo integration:** Use <img src="[PHOTO_PATH]"> in Lebenslauf header
+5. **Professional fonts:** Arial, Helvetica, sans-serif
+6. **Color scheme:** Dark blue (#1e3a8a) or graphite (#374151) for headers/accents
+7. **Typography:** 
+   - Anschreiben: 11pt body text, 1.5 line-height
+   - Lebenslauf: 10pt body text, 1.4 line-height, bold section titles
+8. **Spacing:** Proper margins and padding for A4 format (210mm x 297mm)
+9. **No JavaScript:** Pure HTML+CSS only
+10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 ### CRITICAL RULES
 

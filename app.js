@@ -55,6 +55,40 @@ document.getElementById('downloadLebenslauf').addEventListener('click', () => {
     downloadDocument('lebenslauf', getLebenslaufHtmlWithPhoto());
 });
 
+// Add PDF download buttons
+const anschreibenActions = document.querySelector('#anschreiben-tab .document-actions');
+const lebenslaufActions = document.querySelector('#lebenslauf-tab .document-actions');
+
+const pdfBtnAnschreiben = document.createElement('button');
+pdfBtnAnschreiben.className = 'btn-action';
+pdfBtnAnschreiben.textContent = 'Als PDF speichern';
+pdfBtnAnschreiben.type = 'button';
+pdfBtnAnschreiben.addEventListener('click', () => {
+    if (lastApplication?.anschreiben_html) {
+        printDocument(lastApplication.anschreiben_html);
+        setTimeout(() => {
+            alert('Tipp: Im Druckdialog "Als PDF speichern" wählen');
+        }, 100);
+    }
+});
+
+const pdfBtnLebenslauf = document.createElement('button');
+pdfBtnLebenslauf.className = 'btn-action';
+pdfBtnLebenslauf.textContent = 'Als PDF speichern';
+pdfBtnLebenslauf.type = 'button';
+pdfBtnLebenslauf.addEventListener('click', () => {
+    const html = getLebenslaufHtmlWithPhoto();
+    if (html) {
+        printDocument(html);
+        setTimeout(() => {
+            alert('Tipp: Im Druckdialog "Als PDF speichern" wählen');
+        }, 100);
+    }
+});
+
+if (anschreibenActions) anschreibenActions.appendChild(pdfBtnAnschreiben);
+if (lebenslaufActions) lebenslaufActions.appendChild(pdfBtnLebenslauf);
+
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 function initializeApp() {
@@ -336,7 +370,7 @@ function printDocument(html) {
         return;
     }
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (!printWindow) {
         alert('Pop-up wurde blockiert. Bitte Pop-ups für diese Seite erlauben.');
         return;
@@ -345,7 +379,14 @@ function printDocument(html) {
     printWindow.document.open();
     printWindow.document.write(sanitizeHtml(html));
     printWindow.document.close();
-    setTimeout(() => printWindow.print(), 500);
+    
+    // Wait for images to load before printing
+    printWindow.addEventListener('load', () => {
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
+    });
 }
 
 function downloadDocument(documentType, html) {
