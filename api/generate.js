@@ -174,6 +174,32 @@ function buildPrompt(masterCV, jobDescription) {
 
 Start your response with { immediately!
 
+### CRITICAL: PRESENTATION STRATEGY
+
+**GOLDEN RULE: Present facts in the MOST FAVORABLE light, but NEVER lie or invent information!**
+
+**What you MUST do:**
+1. **Emphasize strengths:** Highlight all real achievements, projects, and skills from CV
+2. **Strategic positioning:** Frame career transition positively (logistics → web dev = systematic approach + technical passion)
+3. **Concrete evidence:** Always mention GitHub (34 repos, 1643+ commits), Portfolio (ok-studio-umber.vercel.app), real deployed projects
+4. **Sell the candidate:** Show how diverse background is an ADVANTAGE (management experience + technical skills + business understanding)
+5. **Professional tone:** Confident but not arrogant, factual but enthusiastic
+
+**What you MUST NOT do:**
+1. ❌ Invent projects, skills, or experience not in CV
+2. ❌ Exaggerate years of experience or expertise level
+3. ❌ Claim certificates or qualifications not earned
+4. ❌ Fabricate job titles or responsibilities
+5. ❌ Make up company names or dates
+
+**How to "sell" honestly:**
+- Instead of: "5 Jahre React-Erfahrung" (if not true)
+- Write: "Intensive Weiterbildung in React mit nachweisbaren Projekten im Portfolio"
+- Instead of: "Experte in AI-Integration"
+- Write: "Praktische Erfahrung mit AI-Integration (Google Gemini API) in produktiven Projekten"
+- Instead of: "Senior Developer"
+- Write: "Projektleiter mit Entwicklungskompetenz und umfangreichem Portfolio"
+
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
 
@@ -249,6 +275,40 @@ ${(cv.achievements || []).map((ach, i) => `${i + 1}. ${ach}`).join('\n')}
 
 **Hobbies:** ${cv.hobbies || ''}
 
+### JOB POSTING ANALYSIS & MATCHING (CRITICAL!)
+
+**STEP 1: Analyze the job posting below**
+
+Before generating documents, you MUST:
+1. **Extract ALL requirements** - list every skill, tool, qualification they mention
+2. **Identify keywords** - note exact terms they use (technology names, methodologies, soft skills)
+3. **Understand their priorities** - what do they emphasize most?
+4. **Find matching points** - for EACH their requirement, find evidence in Master-CV
+
+**STEP 2: Mirror their language**
+- Use EXACT same terms they use in job posting
+- If they say "REST-API" → you say "REST-API" (not just "API")
+- If they say "Teamfähigkeit" → you say "Teamfähigkeit" (not "Teamarbeit")
+- Copy their technology stack terminology precisely
+
+**STEP 3: Match requirements to CV evidence**
+For EACH requirement in job posting, provide concrete evidence from CV:
+- Required skill → Your project/experience that proves it
+- Required technology → Where you used it (with link to GitHub/Portfolio)
+- Required soft skill → Real example from work history
+
+**STEP 4: Strategic presentation**
+- **Lead with matches:** Start with what you have that they want most
+- **Provide proof:** Always reference portfolio, GitHub, or specific achievement
+- **Address gaps honestly:** If missing something, show how you compensate or learn quickly
+- **Show unique value:** What you bring that others don't (management experience + tech skills + AI integration)
+
+**Example of good matching:**
+```
+Job requires: "Erfahrung mit React und Next.js, REST-API Integration"
+Your response: "Praktische Erfahrung mit React und Next.js in produktiven Projekten: OK Studio (Next.js-basierte Portfolio-Plattform mit SEO-Optimierung) und AI-Generator (React mit Google Gemini REST-API Integration). Portfolio einsehbar unter ok-studio-umber.vercel.app, Code auf GitHub (34 Repositories)."
+```
+
 ### JOB POSTING
 ${jobDescription}
 
@@ -264,10 +324,18 @@ ${jobDescription}
 - Otherwise → GENERAL strategy (balance all experience)
 
 **Strategy 1: WEB DEVELOPER positions**
-1. **Anti-Overqualified:** Soften management background. Instead of "Deputy Director" use "Projektleiter". Explain management experience gives discipline and business understanding, but passion is hands-on development.
-2. **Emphasize:** GitHub (34 repos, 1643+ contributions), Portfolio (ok-studio-umber.vercel.app), concrete projects (Garten Siegerland, CarStyleGarage), AI integration skills.
-3. **Position as:** Career transition from logistics to web development, backed by university degree in Computer Science (Datenverarbeitung), long-standing hobby, practical projects.
-4. **Mention:** Self-directed learning, portfolio as proof of skills, willingness to start with Praktikum/Probezeit.
+1. **Anti-Overqualified:** Soften management background. Instead of "Deputy Director" use "Projektleiter Logistik & IT". Explain management experience gives discipline and business understanding, but passion is hands-on development.
+2. **Emphasize STRONGLY:** 
+   - GitHub: 34 repositories, 1643+ contributions (https://github.com/Tor2024)
+   - Portfolio: OK Studio with real client projects (ok-studio-umber.vercel.app)
+   - AI Integration: Built AI-powered application generator with Google Gemini API
+   - Concrete projects: OK Studio (portfolio system), AI Bewerbungsgenerator (Gemini API), Web Studio
+   - Full stack: React, Next.js, TypeScript, Node.js, Vercel, API integration
+3. **Position as:** Career transition from logistics to web development, backed by:
+   - University degree in Computer Science (Datenverarbeitung und Systemtechnik, 1996-2001)
+   - Practical portfolio with deployed production projects
+   - Self-directed learning with real-world application
+4. **Mention:** Portfolio link, GitHub profile, willingness to start with Praktikum/Probezeit, immediate availability
 
 **Strategy 2: LOGISTICS/WAREHOUSE positions**
 1. **Emphasize Leadership:** Use full title "Deputy Director of Customs Terminal", highlight 120 trucks/day management, 1700m² warehouse.
@@ -296,30 +364,40 @@ ${jobDescription}
 
 **Universal Rules (all strategies):**
 
-1. **Entity Extraction:** Find in the job posting:
+1. **Honest but strong presentation:**
+   - Use ALL real facts from CV
+   - Present experience in most favorable but truthful way
+   - Show portfolio and GitHub as proof of skills
+   - Frame career change as strength, not weakness
+   - Emphasize: 20+ years work experience + university degree + modern tech skills + AI integration
+
+2. **Entity Extraction:** Find in the job posting:
+2. **Entity Extraction:** Find in the job posting:
    - Company name
    - Contact person (name, salutation)
    - Email address
    - Complete address
    If no contact name found, use "Sehr geehrte Damen und Herren".
 
-2. **No AI Clichés:** FORBIDDEN phrases:
+3. **No AI Clichés:** FORBIDDEN phrases:
    - "Ich hoffe, diese E-Mail findet Sie gut"
    - "Ich bin der ideale Kandidat"
    - "In der heutigen digitalen Welt"
    - "Mit großem Interesse habe ich..."
    Write in dry, business-like German style. Professional but accessible.
+   **Be confident, not desperate. Show value, not neediness.**
 
-3. **Language Level:** Perfect German but syntactically accessible for B1-B2 level (professional but not overly complex).
+4. **Language Level:** Perfect German but syntactically accessible for B1-B2 level (professional but not overly complex).
 
-4. **Motivation & Integration:** Always mention:
+5. **Motivation & Integration:** Always mention:
    - Since 2022 in Germany after relocation due to war in Ukraine
    - Completed B2 German course (B1 certificate available)
    - Ready to work immediately, open to Probezeit/Praktikum
    - Family integrated in Kreuztal (two children in school)
    - Looking for long-term stable position
+   **Frame as: Experienced professional seeking new challenge, not refugee seeking any job**
 
-5. **Salary & Flexibility:** If job posting asks for salary expectation:
+6. **Salary & Flexibility:** If job posting asks for salary expectation:
    - Mention: "ca. 18-20 EUR/Stunde, verhandelbar je nach Anforderungen"
    - Emphasize flexibility and willingness to learn
 
@@ -380,8 +458,9 @@ Structure:
    [Contact person if found]
    [Address from job posting]
 
-3. **Date:** (right-aligned) Format: Kreuztal, [CURRENT DATE in German format DD. MMMM YYYY]
-   **IMPORTANT:** Use actual current date when generating (e.g., "Kreuztal, 3. Juni 2026")
+3. **Date:** (right-aligned) Format: Kreuztal, den 3. Juni 2026
+   **CRITICAL:** Today's date is 3. Juni 2026 - USE THIS EXACT DATE!
+   Never use 2024 or any other year - it must be 2026!
 
 4. **Subject line:** Bewerbung als [Position from job posting]
 
@@ -393,10 +472,10 @@ Structure:
 6. **Body (3-4 paragraphs) - ADAPT TO POSITION TYPE:**
 
    **For WEB DEVELOPER positions:**
-   - Para 1: Interest in position, mention GitHub (34 repos, 1643+ commits) and portfolio
-   - Para 2: University background in Computer Science, self-taught modern stack, concrete projects
-   - Para 3: How logistics management experience brings systematic approach and business understanding
-   - Para 4: Portfolio link, willingness to start with Praktikum, immediate availability
+   - Para 1: Interest in position. IMMEDIATELY mention: GitHub (34 repos, 1643+ commits), Portfolio (ok-studio-umber.vercel.app) with real projects, AI integration experience (Gemini API)
+   - Para 2: University degree Computer Science (Datenverarbeitung und Systemtechnik, 1996-2001). Self-taught modern stack: React, Next.js, TypeScript, Vercel. Concrete deployed projects: OK Studio (full portfolio system), AI Bewerbungsgenerator.
+   - Para 3: How logistics management brings systematic approach, project management skills, and business understanding. But passion is hands-on development and AI integration.
+   - Para 4: Link to portfolio (ok-studio-umber.vercel.app), GitHub profile, open to Praktikum/Probezeit, immediate availability, work permit §24
 
    **For LOGISTICS/WAREHOUSE positions:**
    - Para 1: Interest in position, 20+ years logistics experience
@@ -555,14 +634,22 @@ Modern 2-column layout:
 - For WAREHOUSE: Skip technical projects, focus on logistics achievements
 
 **Sections:**
-1. Personal Data (Persönliche Daten) - Always include GitHub and Portfolio for tech positions
-2. Professional Experience (Berufserfahrung) - Most recent first, adapt titles to position type
-3. Education (Ausbildung) - Always mention Computer Science degree
-4. Further Education (Weiterbildung) - B2 German course, self-learning (tech positions)
-5. Skills (Kenntnisse) - PRIORITIZE based on job requirements
-6. Languages (Sprachen) - German B2 prominent
-7. Projects (Projekte) - Select 2-3 most relevant to position type
-8. Hobbies (Hobbys) - Brief mention, include AI integration interest for tech positions
+1. **Persönliche Daten** - Name, birth date, address, phone, email. For tech positions ALWAYS add: Portfolio (${pi.portfolio}), GitHub (${pi.github})
+2. **Berufserfahrung** - Most recent first, adapt titles to position type. Include ALL experience from CV.
+3. **Hochschulabschluss / Studium** - University degree (Datenverarbeitung und Systemtechnik, 1996-2001). Label as "Studium" NOT "Ausbildung"!
+4. **Weiterbildung** - B2 German course, self-learning web development (React, Next.js), AI integration
+5. **Kenntnisse** - SHOW ALL SKILLS from CV! Include:
+   - Web Development: React, Next.js, JavaScript, TypeScript, HTML5, CSS3, Node.js
+   - Tools: Git/GitHub (34 repos, 1643+ commits), VS Code, Vercel, Adobe Photoshop, 3D Studio MAX
+   - AI Integration: Google Gemini API, Serverless Functions, practical AI projects
+   - Logistics: 20+ years experience (if relevant to position)
+   - MS Office: Word, Excel, PowerPoint
+6. **Sprachen** - Deutsch B2 (most prominent), Ukrainisch, Russisch (native), English
+7. **Projekte** - Select 2-3 most relevant to position:
+   - For Web Developer: OK Studio (full portfolio with admin panel), AI Bewerbungsgenerator, Web Studio
+   - For IT Support: AI projects, GitHub profile
+   - For Logistics: Seefrachtcontainer, Zollprojekte
+8. **Hobbys** - Brief: "Webdesign, AI-Integration in reale Projekte, 3D-Grafik, Videobearbeitung"
 
 **Formatting:**
 - Use modern fonts (Inter, Roboto, or Arial)
@@ -638,7 +725,7 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 5. **EXTRACT CONTACT INFO** - Company name, contact person (with Herr/Frau), email, address from job posting
 6. **USE CONTACT PERSON** - If contact_person found, ALWAYS use in salutation (Sehr geehrte/r Herr/Frau [Name])
 7. **INCLUDE FULL CONTACT DATA** - ALWAYS include phone (${pi.phone}) and full address (${pi.address}) in sender block
-8. **CURRENT DATE** - Use actual current date in German format (e.g., "Kreuztal, 3. Juni 2026")
+8. **CURRENT DATE** - Use "Kreuztal, den 3. Juni 2026" (NOT 2024!)
 9. **NO AI CLICHÉS** - Avoid forbidden phrases, write in business German style
 10. **VALID JSON ONLY** - Return only JSON, escape quotes properly, no markdown, no extra text, no line breaks in strings
 11. **DETAILED RUSSIAN CHECK** - Provide detailed summary (3-4 sentences), lebenslauf summary, key adaptations
