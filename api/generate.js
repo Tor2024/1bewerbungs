@@ -622,7 +622,7 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- NO markdown wrapper, NO ```json blocks
+- NO markdown wrapper, NO json code blocks (do not wrap response in backticks)
 - Start response with { immediately (first character must be opening brace)
 - Use ONLY single quotes ' for ALL HTML attributes (NEVER double quotes ")
 - Example: <div class='header'> NOT <div class="header">
