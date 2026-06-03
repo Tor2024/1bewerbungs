@@ -151,11 +151,11 @@ function buildPrompt(masterCV, jobDescription) {
 
 **IMPORTANT:** Return ONLY valid JSON. No markdown blocks, no explanations, no backticks.
 
-**HTML ATTRIBUTE RULES:**
-- Use ONLY single quotes (') for ALL HTML attributes
-- NEVER use double quotes (") in HTML
-- Example CORRECT: <div class='header' style='color: blue'>
-- Example WRONG: <div class="header" style="color: blue">
+**HTML ATTRIBUTE RULES - CRITICAL FOR JSON VALIDITY:**
+- You MUST escape all quotes in HTML strings with backslash (\\)
+- Example CORRECT: "anschreiben_html": "<div class=\\"header\\"><p>Text</p></div>"
+- Example WRONG: "anschreiben_html": "<div class="header"><p>Text</p></div>" (breaks JSON!)
+- Every attribute value must be escaped: class=\\"name\\" style=\\"color: blue\\"
 
 **JSON Structure:**
 {
@@ -405,16 +405,16 @@ ${jobDescription}
 
 **IMPORTANT:** Return complete HTML document with inline CSS. No external stylesheets.
 
-**HTML Structure Example (use single quotes for all attributes):**
+**HTML Structure Example (note the escaped quotes):**
 
 <!DOCTYPE html>
-<html lang='de'>
+<html lang=\\"de\\">
 <head>
-<meta charset='UTF-8'>
+<meta charset=\\"UTF-8\\">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
-  font-family: 'Arial', sans-serif; 
+  font-family: \\"Arial\\", sans-serif; 
   font-size: 11pt; 
   line-height: 1.5; 
   color: #333;
@@ -437,11 +437,11 @@ body {
 </style>
 </head>
 <body>
-<!-- Full content here with single quotes in all attributes -->
+<!-- Full content here - remember to escape all quotes! -->
 </body>
 </html>
 
-**CRITICAL:** Use single quotes (') for ALL HTML attributes, never double quotes (")
+**CRITICAL:** Escape ALL quotes with backslash in your JSON: class=\\"header\\"
 
 Structure:
 1. **Sender block** (right-aligned, top):
@@ -520,16 +520,16 @@ Structure:
 
 **IMPORTANT:** Return complete HTML document with inline CSS. Include photo placeholder.
 
-**HTML Structure Example (use single quotes for all attributes):**
+**HTML Structure Example (note the escaped quotes):**
 
 <!DOCTYPE html>
-<html lang='de'>
+<html lang=\\"de\\">
 <head>
-<meta charset='UTF-8'>
+<meta charset=\\"UTF-8\\">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
-  font-family: 'Arial', sans-serif; 
+  font-family: \\"Arial\\", sans-serif; 
   font-size: 10pt; 
   line-height: 1.4; 
   color: #333;
@@ -600,15 +600,15 @@ body {
 </style>
 </head>
 <body>
-<div class='header'>
-  <img src='[PHOTO_PATH]' alt='Bewerbungsfoto' class='photo'>
-  <div class='header-info'>
-    <div class='name'>NAME HERE</div>
-    <div class='contact'>
-      <div class='contact-item'>📍 Address</div>
-      <div class='contact-item'>📞 Phone</div>
-      <div class='contact-item'>✉ Email</div>
-      <div class='contact-item'>🌐 Portfolio/GitHub</div>
+<div class=\\"header\\">
+  <img src=\\"[PHOTO_PATH]\\" alt=\\"Bewerbungsfoto\\" class=\\"photo\\">
+  <div class=\\"header-info\\">
+    <div class=\\"name\\">NAME HERE</div>
+    <div class=\\"contact\\">
+      <div class=\\"contact-item\\">📍 Address</div>
+      <div class=\\"contact-item\\">📞 Phone</div>
+      <div class=\\"contact-item\\">✉ Email</div>
+      <div class=\\"contact-item\\">🌐 Portfolio/GitHub</div>
     </div>
   </div>
 </div>
@@ -711,10 +711,11 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 **CRITICAL JSON REQUIREMENTS:**
 - NO markdown wrapper, NO json code blocks (do not wrap response in backticks)
 - Start response with { immediately (first character must be opening brace)
-- Use ONLY single quotes ' for ALL HTML attributes (NEVER double quotes ")
-- Example: <div class='header'> NOT <div class="header">
-- If you accidentally use double quotes in HTML, you will break the JSON
-- Put entire HTML document as single string value (escape line breaks as \\n if needed)
+- **ESCAPE ALL QUOTES IN HTML:** Use backslash to escape quotes inside HTML strings
+- Example: "anschreiben_html": "<!DOCTYPE html><html lang=\\"de\\"><head><meta charset=\\"UTF-8\\">..."
+- Every single quote or double quote inside HTML MUST have \\ before it
+- Alternative: Use single quotes in HTML and escape them: <div class=\\'header\\'>
+- If you accidentally don't escape quotes, the JSON will break and fail completely
 
 ### CRITICAL RULES
 
