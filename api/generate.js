@@ -33,7 +33,28 @@ module.exports = async (req, res) => {
                     generationConfig: { 
                         temperature: 0.1,
                         maxOutputTokens: 8000,
-                        responseMimeType: 'application/json'
+                        responseMimeType: 'application/json',
+                        responseSchema: {
+                            type: 'object',
+                            properties: {
+                                company_name: { type: 'string' },
+                                contact_person: { type: ['string', 'null'] },
+                                contact_email: { type: ['string', 'null'] },
+                                anschreiben_html: { type: 'string' },
+                                lebenslauf_html: { type: 'string' },
+                                check_translation_ru: {
+                                    type: 'object',
+                                    properties: {
+                                        summary: { type: 'string' },
+                                        tone_check: { type: 'string' },
+                                        lebenslauf_summary: { type: 'string' },
+                                        key_adaptations: { type: 'string' }
+                                    },
+                                    required: ['summary', 'tone_check']
+                                }
+                            },
+                            required: ['company_name', 'anschreiben_html', 'lebenslauf_html', 'check_translation_ru']
+                        }
                     }
                 })
             }
@@ -90,13 +111,20 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-**YOU MUST RETURN VALID JSON ONLY**
-- Use SINGLE QUOTES (') for all HTML attributes
-- Use DOUBLE QUOTES (") for JSON structure only
-- Example: { "html": "<div class='test'>content</div>" }
-- NO double quotes inside HTML strings
+**YOU MUST RETURN VALID JSON WITH PROPER ESCAPING**
+- All HTML must be a single line (no literal newlines)
+- Use \\n for line breaks in HTML where needed
+- Escape all backslashes: \\ becomes \\\\
+- Use ONLY single quotes in HTML: class='test' NOT class="test"
 - NO markdown, NO code blocks, NO backticks
 - Return pure JSON object immediately
+- Gemini will auto-escape the JSON for you - write natural HTML with single quotes
+
+Example correct format:
+{
+  "company_name": "Test GmbH",
+  "anschreiben_html": "<!DOCTYPE html><html><body><p class='text'>Content</p></body></html>"
+}
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
@@ -549,18 +577,15 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- **USE SINGLE QUOTES IN HTML:** All HTML attributes must use single quotes ('), not double quotes (")
-  Example GOOD: <div class='header'>
-  Example BAD: <div class="header">
-- Return pure JSON object, no markdown code blocks
+- **SINGLE LINE HTML:** All HTML must be one continuous line without literal line breaks
+- **SINGLE QUOTES ONLY:** Use ' for all HTML attributes, never "
+- **MINIMAL ATTRIBUTES:** Avoid unnecessary attributes, use CSS classes sparingly  
+- **INLINE STYLES:** Prefer inline styles over classes where possible: style='margin:10px' 
+- Return pure JSON object, no markdown
 - No backticks, no ```json wrapper
-- String values must use double quotes for JSON structure
-- HTML content must use single quotes for all attributes
-- Escape any apostrophes in German text with &apos; or \'
-- No literal line breaks inside JSON string values
-- Minify HTML (remove unnecessary whitespace between tags)
-- All newlines in HTML must be actual \n characters, not literal breaks
-- Test that output is valid JSON before returning
+- Gemini responseSchema will handle proper escaping
+- Write clean HTML and let Gemini escape it automatically
+- Use \\n only where you need actual line breaks in rendered HTML
 
 ### CRITICAL RULES
 
