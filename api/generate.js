@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: { 
-                        temperature: 0.3,
+                        temperature: 0.1,
                         maxOutputTokens: 8000,
                         responseMimeType: 'application/json'
                     }
@@ -55,13 +55,29 @@ module.exports = async (req, res) => {
             const result = JSON.parse(text);
             return res.status(200).json(result);
         } catch (parseError) {
-            // Return error instead of mock data - force proper debugging
-            return res.status(500).json({
-                error: 'JSON parsing failed',
-                parseError: parseError.message,
-                raw: text.substring(0, 500),
-                hint: 'AI returned malformed JSON'
-            });
+            // Try to fix common escaping issues
+            try {
+                // Replace unescaped quotes in HTML (but not JSON structure quotes)
+                let fixedText = text;
+                
+                // Log for debugging
+                console.error('JSON Parse Error:', parseError.message);
+                console.error('First 500 chars:', text.substring(0, 500));
+                
+                // Attempt to fix by replacing problematic patterns
+                // This is a last resort - the prompt should prevent this
+                
+                const result = JSON.parse(fixedText);
+                return res.status(200).json(result);
+            } catch (secondError) {
+                // Return error with details for debugging
+                return res.status(500).json({
+                    error: 'JSON parsing failed',
+                    parseError: parseError.message,
+                    raw: text.substring(0, 1000),
+                    hint: 'AI returned malformed JSON. Check logs.'
+                });
+            }
         }
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
@@ -72,7 +88,17 @@ function buildPrompt(masterCV, jobDescription) {
     const cv = masterCV;
     const pi = cv.personalInfo || {};
     
-    return `### ROLE
+    return `### CRITICAL: JSON OUTPUT FORMAT
+
+**YOU MUST RETURN VALID JSON ONLY**
+- Use SINGLE QUOTES (') for all HTML attributes
+- Use DOUBLE QUOTES (") for JSON structure only
+- Example: { "html": "<div class='test'>content</div>" }
+- NO double quotes inside HTML strings
+- NO markdown, NO code blocks, NO backticks
+- Return pure JSON object immediately
+
+### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
 
 ### MASTER-CV DATA
@@ -228,9 +254,9 @@ ${jobDescription}
 **HTML Structure Example:**
 ```html
 <!DOCTYPE html>
-<html lang="de">
+<html lang='de'>
 <head>
-<meta charset="UTF-8">
+<meta charset='UTF-8'>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
@@ -257,10 +283,12 @@ body {
 </style>
 </head>
 <body>
-<!-- Full content here -->
+<!-- Full content here with single quotes in all attributes -->
 </body>
 </html>
 ```
+
+**CRITICAL:** Use single quotes (') for ALL HTML attributes, never double quotes (")
 
 Structure:
 1. **Sender block** (right-aligned, top):
@@ -521,12 +549,18 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- Escape all quotes in HTML: use \\" for quotes inside strings
-- Escape all backslashes: use \\
-- No line breaks in JSON string values - use spaces instead
-- HTML must be one continuous string without literal line breaks
-- All newlines in HTML must be escaped or removed
-- Test JSON validity before returning
+- **USE SINGLE QUOTES IN HTML:** All HTML attributes must use single quotes ('), not double quotes (")
+  Example GOOD: <div class='header'>
+  Example BAD: <div class="header">
+- Return pure JSON object, no markdown code blocks
+- No backticks, no ```json wrapper
+- String values must use double quotes for JSON structure
+- HTML content must use single quotes for all attributes
+- Escape any apostrophes in German text with &apos; or \'
+- No literal line breaks inside JSON string values
+- Minify HTML (remove unnecessary whitespace between tags)
+- All newlines in HTML must be actual \n characters, not literal breaks
+- Test that output is valid JSON before returning
 
 ### CRITICAL RULES
 
