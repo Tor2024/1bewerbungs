@@ -275,17 +275,27 @@ async function generateDocuments() {
         
         if (!response.ok) {
             // Show detailed error information
-            console.error('API Error:', result);
+            console.error('API Error Response:', result);
             
-            let errorMessage = result.error || 'Unknown error';
-            if (result.errorContext) {
-                errorMessage += '\n\nContext: ' + result.errorContext;
+            // Build detailed error message
+            let errorDetails = `Fehler: ${result.error || 'Unknown error'}`;
+            
+            if (result.responsePreview) {
+                errorDetails += `\n\nGemini hat zurückgegeben:\n${result.responsePreview.substring(0, 300)}...`;
             }
+            
             if (result.rawPreview) {
-                console.log('Raw API response preview:', result.rawPreview);
+                errorDetails += `\n\nRaw Response:\n${result.rawPreview.substring(0, 300)}...`;
             }
             
-            throw new Error(errorMessage);
+            if (result.hint) {
+                errorDetails += `\n\nHinweis: ${result.hint}`;
+            }
+            
+            // Show in alert
+            alert(errorDetails);
+            
+            throw new Error(result.error || 'API Error');
         }
 
         validateApplicationResult(result);
