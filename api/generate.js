@@ -31,30 +31,8 @@ module.exports = async (req, res) => {
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: { 
-                        temperature: 0.1,
-                        maxOutputTokens: 8000,
-                        responseMimeType: 'application/json',
-                        responseSchema: {
-                            type: 'object',
-                            properties: {
-                                company_name: { type: 'string' },
-                                contact_person: { type: ['string', 'null'] },
-                                contact_email: { type: ['string', 'null'] },
-                                anschreiben_html: { type: 'string' },
-                                lebenslauf_html: { type: 'string' },
-                                check_translation_ru: {
-                                    type: 'object',
-                                    properties: {
-                                        summary: { type: 'string' },
-                                        tone_check: { type: 'string' },
-                                        lebenslauf_summary: { type: 'string' },
-                                        key_adaptations: { type: 'string' }
-                                    },
-                                    required: ['summary', 'tone_check']
-                                }
-                            },
-                            required: ['company_name', 'anschreiben_html', 'lebenslauf_html', 'check_translation_ru']
-                        }
+                        temperature: 0.2,
+                        maxOutputTokens: 8000
                     }
                 })
             }
@@ -69,37 +47,11 @@ module.exports = async (req, res) => {
         let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
         
         // Clean markdown if present
-        text = text.trim().replace(/^```json?\s*/, '').replace(/\s*```$/, '');
+        text = text.trim().replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
         
-        // Try to fix common JSON issues
-        try {
-            const result = JSON.parse(text);
-            return res.status(200).json(result);
-        } catch (parseError) {
-            // Try to fix common escaping issues
-            try {
-                // Replace unescaped quotes in HTML (but not JSON structure quotes)
-                let fixedText = text;
-                
-                // Log for debugging
-                console.error('JSON Parse Error:', parseError.message);
-                console.error('First 500 chars:', text.substring(0, 500));
-                
-                // Attempt to fix by replacing problematic patterns
-                // This is a last resort - the prompt should prevent this
-                
-                const result = JSON.parse(fixedText);
-                return res.status(200).json(result);
-            } catch (secondError) {
-                // Return error with details for debugging
-                return res.status(500).json({
-                    error: 'JSON parsing failed',
-                    parseError: parseError.message,
-                    raw: text.substring(0, 1000),
-                    hint: 'AI returned malformed JSON. Check logs.'
-                });
-            }
-        }
+        // Parse JSON
+        const result = JSON.parse(text);
+        return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
     }
@@ -111,20 +63,21 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-**YOU MUST RETURN VALID JSON WITH PROPER ESCAPING**
-- All HTML must be a single line (no literal newlines)
-- Use \\n for line breaks in HTML where needed
-- Escape all backslashes: \\ becomes \\\\
-- Use ONLY single quotes in HTML: class='test' NOT class="test"
-- NO markdown, NO code blocks, NO backticks
-- Return pure JSON object immediately
-- Gemini will auto-escape the JSON for you - write natural HTML with single quotes
+Return valid JSON wrapped in ```json markers.
 
-Example correct format:
+Format:
+```json
 {
-  "company_name": "Test GmbH",
-  "anschreiben_html": "<!DOCTYPE html><html><body><p class='text'>Content</p></body></html>"
+  "company_name": "...",
+  "contact_person": "...",
+  "contact_email": "...",
+  "anschreiben_html": "...",
+  "lebenslauf_html": "...",
+  "check_translation_ru": {...}
 }
+```
+
+FOR HTML STRINGS: Replace ALL newlines with actual \\n character. Use single quotes for attributes.
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
@@ -577,15 +530,11 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- **SINGLE LINE HTML:** All HTML must be one continuous line without literal line breaks
-- **SINGLE QUOTES ONLY:** Use ' for all HTML attributes, never "
-- **MINIMAL ATTRIBUTES:** Avoid unnecessary attributes, use CSS classes sparingly  
-- **INLINE STYLES:** Prefer inline styles over classes where possible: style='margin:10px' 
-- Return pure JSON object, no markdown
-- No backticks, no ```json wrapper
-- Gemini responseSchema will handle proper escaping
-- Write clean HTML and let Gemini escape it automatically
-- Use \\n only where you need actual line breaks in rendered HTML
+- Wrap response in ```json code block
+- Replace newlines in HTML with \\n character  
+- Use single quotes for HTML attributes
+- Escape backslashes and quotes properly
+- Keep HTML on one line per field
 
 ### CRITICAL RULES
 
