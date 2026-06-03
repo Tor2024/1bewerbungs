@@ -5,7 +5,8 @@
     "address": "Kattowitzer Str. 10, 57223 Kreuztal",
     "phone": "015237237407",
     "email": "kalchenko2022@gmail.com",
-    "photo": "photo.jpg"
+    "photo": "photo.jpg",
+    "portfolio": "https://ok-studio-umber.vercel.app"
   },
   "profile": {
     "de": "Erfahrener Experte in Datenverarbeitung, Systemtechnik und Zolldeklaration. Spezialisiert auf Marketing und Import von italienischen Möbeln. Profunde Kenntnisse in Logistik, Zollvorschriften und internationalen Geschäftsbeziehungen.",
@@ -118,6 +119,12 @@
     ]
   },
   "projects": [
+    {
+      "title": "OK Studio — Web-Design & Relaunch für den Mittelstand",
+      "description": "Professionelles Webdesign-Portfolio mit mehreren realisierten Projekten für mittelständische Unternehmen. Spezialisierung auf moderne, responsive Webseiten mit Fokus auf Benutzerfreundlichkeit und Performance. Umfasst Projekte für verschiedene Branchen mit kompletten Design- und Entwicklungslösungen.",
+      "url": "https://ok-studio-umber.vercel.app",
+      "technologies": "Webdesign, responsive Design, moderne Frontend-Technologien"
+    },
     {
       "title": "Seefrachtcontainer-Lieferung",
       "description": "Erfolgreiche Durchführung des Projekts zur Lieferung von 300 Seefrachtcontainern aus dem Hamburger Hafen in die Ukraine innerhalb von 30 Tagen wurde erfolgreich durchgeführt."

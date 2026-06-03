@@ -83,6 +83,7 @@ You are an expert HR engineer and document architect for the German job market. 
 - Address: ${pi.address}
 - Phone: ${pi.phone}
 - Email: ${pi.email}
+${pi.portfolio ? `- Portfolio: ${pi.portfolio}` : ''}
 
 **Languages:**
 ${Object.entries(cv.languages || {}).map(([lang, level]) => `- ${lang}: ${level}`).join('\n')}
@@ -120,6 +121,8 @@ ${(cv.skills?.webDevelopment || []).join(', ')}
 ${(cv.projects || []).map((proj, i) => `
 ${i + 1}. ${proj.title}
    ${proj.description}
+   ${proj.url ? `URL: ${proj.url}` : ''}
+   ${proj.technologies ? `Technologies: ${proj.technologies}` : ''}
 `).join('\n')}
 
 **Key Achievements:**
@@ -184,8 +187,10 @@ Structure:
    - Opening: Briefly state interest in the position
    - Main paragraph 1: Highlight relevant experience (soften management roles, emphasize technical work)
    - Main paragraph 2: Connect logistics background to web development (analytical thinking, systematic approach, project management)
-   - Main paragraph 3: Mention specific skills from job requirements (React, Next.js, etc.)
-   - Closing: Express interest in interview
+   - Main paragraph 3: Mention specific skills from job requirements (React, Next.js, etc.) AND reference portfolio if available
+   - Closing: Express interest in interview, mention portfolio link if available
+
+**IMPORTANT:** If portfolio URL exists (${pi.portfolio || 'check personalInfo.portfolio'}), mention it in the letter as proof of practical web development skills. Example: "Mein Portfolio unter ok-studio-umber.vercel.app zeigt meine praktischen Projekte im Webdesign."
 
 7. **Closing formula:**
    Mit freundlichen Grüßen
@@ -201,16 +206,16 @@ Structure:
 ### LEBENSLAUF REQUIREMENTS
 
 Modern 2-column layout:
-- **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info, languages, skills
+- **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info (including portfolio URL if available), languages, skills
 - **Right column (70%):** Experience, education, projects
 
 **Sections:**
-1. Personal Data (Persönliche Daten)
+1. Personal Data (Persönliche Daten) - Include portfolio URL if available
 2. Professional Experience (Berufserfahrung) - Most recent first, soften management titles
 3. Education (Ausbildung)
 4. Skills (Kenntnisse) - Split: Technical/Logistics + Web Development
 5. Languages (Sprachen)
-6. Notable Projects (Projekte) - Select 2-3 most impressive
+6. Notable Projects (Projekte) - Select 2-3 most impressive, ALWAYS include OK Studio portfolio project if present
 7. Hobbies (Hobbys) - Brief mention
 
 **Formatting:**
