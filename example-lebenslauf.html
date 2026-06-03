@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lebenslauf - Oleh Kalchenko</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Arial', 'Helvetica', sans-serif; 
+  font-size: 10pt; 
+  line-height: 1.5; 
+  color: #333;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 15mm 20mm;
+  background: white;
+}
+@media print {
+  @page { size: A4; margin: 10mm; }
+  body { padding: 0; margin: 0; }
+  .entry { page-break-inside: avoid; }
+}
+.header { 
+  display: flex; 
+  align-items: flex-start; 
+  margin-bottom: 12mm;
+  border-bottom: 3px solid #1e3a8a;
+  padding-bottom: 8mm;
+}
+.photo { 
+  width: 35mm; 
+  height: 45mm; 
+  border: 1px solid #ccc; 
+  border-radius: 2px;
+  margin-right: 12mm;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+.header-info { flex: 1; }
+.name { 
+  font-size: 22pt; 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 3mm;
+  letter-spacing: -0.5px;
+}
+.title {
+  font-size: 11pt;
+  color: #666;
+  margin-bottom: 5mm;
+  font-weight: 500;
+}
+.contact { 
+  font-size: 9pt; 
+  color: #555;
+  line-height: 1.6;
+}
+.contact-item { 
+  margin-bottom: 2mm;
+  display: flex;
+  align-items: center;
+}
+.contact-item .icon {
+  margin-right: 3mm;
+  font-size: 10pt;
+}
+.section { 
+  margin-bottom: 8mm; 
+}
+.section-title { 
+  font-size: 13pt; 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 4mm;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 2mm;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.entry { 
+  margin-bottom: 6mm; 
+}
+.entry-header { 
+  display: flex; 
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: bold;
+  margin-bottom: 2mm;
+}
+.entry-title { 
+  color: #1e3a8a; 
+  font-size: 10.5pt;
+}
+.entry-period { 
+  color: #666; 
+  font-size: 9pt;
+  white-space: nowrap;
+}
+.entry-company { 
+  color: #666; 
+  font-style: italic; 
+  margin-bottom: 2mm;
+  font-size: 9.5pt;
+}
+.entry-content { 
+  margin-left: 5mm;
+  color: #444;
+}
+.entry-content ul {
+  list-style-type: disc;
+  margin-left: 5mm;
+}
+.entry-content li { 
+  margin-bottom: 1.5mm;
+  line-height: 1.5;
+}
+.skills-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 5mm; 
+}
+.skill-category { 
+  margin-bottom: 4mm; 
+}
+.skill-category-title { 
+  font-weight: bold; 
+  color: #1e3a8a; 
+  margin-bottom: 2mm;
+  font-size: 10pt;
+}
+.skill-list {
+  color: #444;
+  line-height: 1.6;
+}
+.languages-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3mm 8mm;
+  margin-top: 3mm;
+}
+.lang-name {
+  font-weight: 600;
+  color: #333;
+}
+.lang-level {
+  color: #666;
+}
+a {
+  color: #1e3a8a;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="photo.jpg" alt="Bewerbungsfoto" class="photo">
+  <div class="header-info">
+    <div class="name">Oleh Kalchenko</div>
+    <div class="title">Web Developer • Project Manager • Logistics Expert</div>
+    <div class="contact">
+      <div class="contact-item">
+        <span class="icon">📍</span>
+        <span>Kattowitzer Str. 10, 57223 Kreuztal</span>
+      </div>
+      <div class="contact-item">
+        <span class="icon">📞</span>
+        <span>015237237407</span>
+      </div>
+      <div class="contact-item">
+        <span class="icon">✉</span>
+        <span>kalchenko2022@gmail.com</span>
+      </div>
+      <div class="contact-item">
+        <span class="icon">🌐</span>
+        <span><a href="https://ok-studio-umber.vercel.app">ok-studio-umber.vercel.app</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="icon">💻</span>
+        <span><a href="https://github.com/Tor2024">github.com/Tor2024</a> (34 Repos, 1643+ Commits)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Berufserfahrung</div>
+  
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Selbstständige Weiterbildung und Projektarbeit</span>
+      <span class="entry-period">Feb 2022 — heute</span>
+    </div>
+    <div class="entry-company">Freiberuflich • Kreuztal, Deutschland</div>
+    <div class="entry-content">
+      <ul>
+        <li>Intensive Weiterbildung in moderner Webentwicklung (React, Next.js, TypeScript)</li>
+        <li>Entwicklung von OK Studio Portfolio mit Admin-Panel und KI-Integration</li>
+        <li>Erstellung eines AI-gestützten Bewerbungsgenerators (Google Gemini API)</li>
+        <li>GitHub-Profil mit 34 Repositories und über 1.643 Contributions</li>
+        <li>Abschluss Deutschkurs B2-Niveau</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Projektleiter Zollterminal</span>
+      <span class="entry-period">Mrz 2017 — Feb 2022</span>
+    </div>
+    <div class="entry-company">Grand Wind GmbH • Charkiw, Ukraine</div>
+    <div class="entry-content">
+      <ul>
+        <li>Teamführung und Koordination täglicher Prozesse</li>
+        <li>Verwaltung von 120 Lastwagen/Tag und 1.700 m² Zolllager</li>
+        <li>Budgetverantwortung und Kostenkontrolle</li>
+        <li>Kundenbetreuung und Konfliktlösung</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Zolldeklarant</span>
+      <span class="entry-period">Jul 2003 — Mrz 2017</span>
+    </div>
+    <div class="entry-company">Avanta GmbH • Charkiw, Ukraine</div>
+    <div class="entry-content">
+      <ul>
+        <li>Abwicklung von Zollformalitäten für Import/Export</li>
+        <li>Zusammenarbeit mit Zolllagern in Deutschland, Italien, Türkei, Ungarn, Polen, China</li>
+        <li>Zollprüfungen und Compliance-Management</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Ausbildung</div>
+  
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Datenverarbeitung und Systemtechnik</span>
+      <span class="entry-period">Sep 1996 — Jun 2001</span>
+    </div>
+    <div class="entry-company">Charkiw National University of Radio Electronics • Ukraine</div>
+    <div class="entry-content">
+      Diplomarbeit: Approximation von dreidimensionalen Bildern<br>
+      Schwerpunkte: Programmierung, Netzwerktechnik, 3D-Grafik
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Weiterbildung</div>
+  
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Deutschkurs B2-Niveau</span>
+      <span class="entry-period">2022 — 2026</span>
+    </div>
+    <div class="entry-company">Sprachschule Deutschland</div>
+  </div>
+  
+  <div class="entry">
+    <div class="entry-header">
+      <span class="entry-title">Web Development (React, Next.js, TypeScript)</span>
+      <span class="entry-period">2022 — heute</span>
+    </div>
+    <div class="entry-company">Selbststudium mit praktischen Projekten</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Kenntnisse</div>
+  
+  <div class="skills-grid">
+    <div class="skill-category">
+      <div class="skill-category-title">Web Development</div>
+      <div class="skill-list">
+        React, Next.js, TypeScript, JavaScript (ES6+), HTML5/CSS3, Node.js, Git/GitHub, Vercel, API Integration, AI-Integration, SEO
+      </div>
+    </div>
+    
+    <div class="skill-category">
+      <div class="skill-category-title">Management & Organisation</div>
+      <div class="skill-list">
+        Projektmanagement, Prozessoptimierung, Teamführung, Logistik, Budgetverantwortung, Kundenservice
+      </div>
+    </div>
+    
+    <div class="skill-category">
+      <div class="skill-category-title">Software & Tools</div>
+      <div class="skill-list">
+        VS Code, Git/GitHub, Adobe Photoshop, 3D Studio MAX, MS Office, Videobearbeitung
+      </div>
+    </div>
+    
+    <div class="skill-category">
+      <div class="skill-category-title">Soft Skills</div>
+      <div class="skill-list">
+        Zuverlässigkeit, Schnelle Auffassungsgabe, Selbstständiges Arbeiten, Teamfähigkeit, Belastbarkeit
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Sprachen</div>
+  <div class="languages-grid">
+    <div class="lang-name">Deutsch</div>
+    <div class="lang-level">B2-Niveau (Zertifikat B1, Kurs B2 abgeschlossen)</div>
+    
+    <div class="lang-name">Ukrainisch</div>
+    <div class="lang-level">Muttersprache</div>
+    
+    <div class="lang-name">Russisch</div>
+    <div class="lang-level">Muttersprache</div>
+    
+    <div class="lang-name">Englisch</div>
+    <div class="lang-level">Grundkenntnisse</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Projekte</div>
+  
+  <div class="entry">
+    <div class="entry-title">OK Studio — Web-Agentur Portfolio</div>
+    <div class="entry-content">
+      Vollständiges Portfolio-System mit Case Studies (Garten Siegerland, CarStyleGarage), Blog, Admin-Panel, SEO-Optimierung. Technologien: Next.js, React, TypeScript, Vercel.
+      <br><a href="https://ok-studio-umber.vercel.app">ok-studio-umber.vercel.app</a>
+    </div>
+  </div>
+  
+  <div class="entry">
+    <div class="entry-title">KI-gestützter Bewerbungsgenerator</div>
+    <div class="entry-content">
+      Web-Anwendung zur automatischen Generierung deutscher Bewerbungsunterlagen mit Google Gemini AI, Serverless Functions, API-Load-Balancing.
+      <br><a href="https://github.com/Tor2024/1bewerbungs">github.com/Tor2024/1bewerbungs</a>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Weitere Informationen</div>
+  <div class="entry-content">
+    <strong>Arbeitserlaubnis:</strong> § 24 AufenthG<br>
+    <strong>Verfügbarkeit:</strong> Sofort, Vollzeit<br>
+    <strong>Führerschein:</strong> Kategorie B<br>
+    <strong>Interessen:</strong> AI-Integration in reale Projekte, Webdesign, 3D-Grafik, Videobearbeitung
+  </div>
+</div>
+
+</body>
+</html>
