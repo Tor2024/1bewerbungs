@@ -152,29 +152,74 @@ ${jobDescription}
 
 ### ADAPTATION PRINCIPLES (CRITICAL)
 
-1. **Anti-Overqualified Strategy:** Soften management background. Instead of "Director/Deputy Director" use "Projektleiter" or "Senior Specialist". In the cover letter, explain that management experience gives discipline and understanding of business goals, but your passion and focus now is hands-on development.
+**IMPORTANT:** Analyze the job posting to determine the position type and adapt the strategy accordingly:
 
-2. **Entity Extraction:** Find in the job posting:
+**Position Type Detection:**
+- If keywords: "Developer", "Entwickler", "Frontend", "Backend", "Programmierer", "Software" → WEB DEVELOPER strategy
+- If keywords: "Lager", "Logistik", "Versand", "Kommissionierung", "Warehouse" → LOGISTICS/WAREHOUSE strategy
+- If keywords: "Verwaltung", "Administration", "Büro", "Office", "Sachbearbeiter" → ADMINISTRATIVE strategy
+- If keywords: "IT-Support", "Help Desk", "Support", "Systemadministrator" → IT SUPPORT strategy
+- Otherwise → GENERAL strategy (balance all experience)
+
+**Strategy 1: WEB DEVELOPER positions**
+1. **Anti-Overqualified:** Soften management background. Instead of "Deputy Director" use "Projektleiter". Explain management experience gives discipline and business understanding, but passion is hands-on development.
+2. **Emphasize:** GitHub (34 repos, 1643+ contributions), Portfolio (ok-studio-umber.vercel.app), concrete projects (Garten Siegerland, CarStyleGarage), AI integration skills.
+3. **Position as:** Career transition from logistics to web development, backed by university degree in Computer Science (Datenverarbeitung), long-standing hobby, practical projects.
+4. **Mention:** Self-directed learning, portfolio as proof of skills, willingness to start with Praktikum/Probezeit.
+
+**Strategy 2: LOGISTICS/WAREHOUSE positions**
+1. **Emphasize Leadership:** Use full title "Deputy Director of Customs Terminal", highlight 120 trucks/day management, 1700m² warehouse.
+2. **Focus on:** 20+ years logistics experience, customs knowledge, international shipping, systematic work approach.
+3. **Technical skills as bonus:** Mention IT literacy, Excel skills, potential for digitalization projects.
+4. **Soft skills:** Reliability, physical capability, team leadership, problem-solving.
+
+**Strategy 3: ADMINISTRATIVE positions**
+1. **Balance approach:** Mention both management experience AND technical skills.
+2. **Emphasize:** Documentation expertise, customer service, MS Office proficiency, systematic work.
+3. **Highlight:** International experience, multi-project coordination, detail-oriented work style.
+4. **Position as:** Seeking stable office role after management position, bring organizational skills.
+
+**Strategy 4: IT SUPPORT positions**
+1. **Technical foundation:** University degree in Computer Science, self-taught modern technologies.
+2. **Problem-solving:** Experience with complex systems, customer service from logistics background.
+3. **Learning ability:** Self-directed learning (web development), quick adaptation to new tools.
+4. **Communication:** B2 German, experience explaining technical concepts to non-technical users.
+
+**Strategy 5: GENERAL (unknown position type)**
+1. **Versatile profile:** Present as flexible candidate with diverse skill set.
+2. **Highlight adaptability:** Successfully transitioned from logistics to web development through self-learning.
+3. **Core strengths:** Reliability, systematic approach, quick learner, strong work ethic.
+
+**Universal Rules (all strategies):**
+
+**Universal Rules (all strategies):**
+
+1. **Entity Extraction:** Find in the job posting:
    - Company name
    - Contact person (name, salutation)
    - Email address
    - Complete address
    If no contact name found, use "Sehr geehrte Damen und Herren".
 
-3. **No AI Clichés:** FORBIDDEN phrases:
+2. **No AI Clichés:** FORBIDDEN phrases:
    - "Ich hoffe, diese E-Mail findet Sie gut"
    - "Ich bin der ideale Kandidat"
    - "In der heutigen digitalen Welt"
    - "Mit großem Interesse habe ich..."
    Write in dry, business-like German style. Professional but accessible.
 
-4. **Language Level:** Perfect German but syntactically accessible for B1-B2 level (professional but not overly complex).
+3. **Language Level:** Perfect German but syntactically accessible for B1-B2 level (professional but not overly complex).
 
-5. **Career Transition:** Position the transition from Logistics Management to Web Development as:
-   - Logical evolution using technical background from university (Datenverarbeitung und Systemtechnik)
-   - Long-standing passion for web design and programming (mentioned in hobbies)
-   - Practical experience from creating electronic furniture catalog and other IT projects
-   - Management skills now applied to software development discipline
+4. **Motivation & Integration:** Always mention:
+   - Since 2022 in Germany after relocation due to war in Ukraine
+   - Completed B2 German course (B1 certificate available)
+   - Ready to work immediately, open to Probezeit/Praktikum
+   - Family integrated in Kreuztal (two children in school)
+   - Looking for long-term stable position
+
+5. **Salary & Flexibility:** If job posting asks for salary expectation:
+   - Mention: "ca. 18-20 EUR/Stunde, verhandelbar je nach Anforderungen"
+   - Emphasize flexibility and willingness to learn
 
 ### ANSCHREIBEN REQUIREMENTS (DIN 5008)
 
@@ -198,14 +243,41 @@ Structure:
    - If contact person found: "Sehr geehrte/r [Herr/Frau] [Name],"
    - Otherwise: "Sehr geehrte Damen und Herren,"
 
-6. **Body (3-4 paragraphs):**
-   - Opening: Briefly state interest in the position
-   - Main paragraph 1: Highlight relevant experience (soften management roles, emphasize technical work)
-   - Main paragraph 2: Connect logistics background to web development (analytical thinking, systematic approach, project management)
-   - Main paragraph 3: Mention specific skills from job requirements (React, Next.js, etc.) AND reference portfolio if available
-   - Closing: Express interest in interview, mention portfolio link if available
+6. **Body (3-4 paragraphs) - ADAPT TO POSITION TYPE:**
 
-**IMPORTANT:** If portfolio URL exists (${pi.portfolio || 'check personalInfo.portfolio'}), mention it in the letter as proof of practical web development skills. Example: "Mein Portfolio unter ok-studio-umber.vercel.app zeigt meine praktischen Projekte im Webdesign."
+   **For WEB DEVELOPER positions:**
+   - Para 1: Interest in position, mention GitHub (34 repos, 1643+ commits) and portfolio
+   - Para 2: University background in Computer Science, self-taught modern stack, concrete projects
+   - Para 3: How logistics management experience brings systematic approach and business understanding
+   - Para 4: Portfolio link, willingness to start with Praktikum, immediate availability
+
+   **For LOGISTICS/WAREHOUSE positions:**
+   - Para 1: Interest in position, 20+ years logistics experience
+   - Para 2: Concrete achievements (120 trucks/day, 1700m² warehouse, customs expertise)
+   - Para 3: Systematic work approach, reliability, physical capability, team experience
+   - Para 4: Integration in Germany, German B2, immediate availability
+
+   **For ADMINISTRATIVE positions:**
+   - Para 1: Interest in position, diverse background in management and organization
+   - Para 2: Documentation expertise, MS Office, customer service, multi-project coordination
+   - Para 3: International experience, attention to detail, systematic approach
+   - Para 4: Looking for stable position, German B2, immediate availability
+
+   **For IT SUPPORT positions:**
+   - Para 1: Interest in position, Computer Science degree + self-taught modern tech
+   - Para 2: Problem-solving experience, customer service background, quick learner
+   - Para 3: Technical projects as proof (GitHub, portfolio), systematic troubleshooting
+   - Para 4: Willingness to learn company systems, German B2, immediate availability
+
+   **For GENERAL positions:**
+   - Para 1: Interest in position, versatile background
+   - Para 2: Highlight most relevant experience from job requirements
+   - Para 3: Emphasize reliability, learning ability, systematic approach
+   - Para 4: Integration status, German B2, flexibility, immediate availability
+
+   **Always include if relevant:**
+   - Portfolio link (for tech positions): "Mein Portfolio unter ok-studio-umber.vercel.app zeigt meine praktischen Projekte."
+   - GitHub (for developer positions): "Mein GitHub-Profil mit über 30 Repositories belegt meine kontinuierliche Arbeit."
 
 7. **Closing formula:**
    Mit freundlichen Grüßen
@@ -221,17 +293,31 @@ Structure:
 ### LEBENSLAUF REQUIREMENTS
 
 Modern 2-column layout:
-- **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info (including portfolio URL if available), languages, skills
-- **Right column (70%):** Experience, education, projects
+- **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info (including portfolio and GitHub for tech positions), languages, core skills
+- **Right column (70%):** Experience (adapt titles based on position type), education, projects (select most relevant)
+
+**Experience Section - ADAPT TITLES:**
+- For WEB DEVELOPER: "Projektleiter" or "Senior Specialist" (soften management)
+- For LOGISTICS: Keep "Stellvertretender Direktor" (show leadership)
+- For ADMINISTRATIVE: "Projektmanager" or "Teamleiter" (balance)
+- For IT SUPPORT: "IT-Projektleiter" (technical angle)
+
+**Projects Section - SELECT BASED ON POSITION:**
+- For WEB DEVELOPER: Show OK Studio, AI Generator, Web Studio (all 3)
+- For IT positions: Show AI Generator, mention GitHub
+- For LOGISTICS: Show Seefrachtcontainer, Logistikprojekte
+- For ADMINISTRATIVE: Show Elektronischer Möbelkatalog
+- For WAREHOUSE: Skip technical projects, focus on logistics achievements
 
 **Sections:**
-1. Personal Data (Persönliche Daten) - Include portfolio URL if available
-2. Professional Experience (Berufserfahrung) - Most recent first, soften management titles
-3. Education (Ausbildung)
-4. Skills (Kenntnisse) - Split: Technical/Logistics + Web Development
-5. Languages (Sprachen)
-6. Notable Projects (Projekte) - Select 2-3 most impressive, ALWAYS include OK Studio portfolio project if present
-7. Hobbies (Hobbys) - Brief mention
+1. Personal Data (Persönliche Daten) - Always include GitHub and Portfolio for tech positions
+2. Professional Experience (Berufserfahrung) - Most recent first, adapt titles to position type
+3. Education (Ausbildung) - Always mention Computer Science degree
+4. Further Education (Weiterbildung) - B2 German course, self-learning (tech positions)
+5. Skills (Kenntnisse) - PRIORITIZE based on job requirements
+6. Languages (Sprachen) - German B2 prominent
+7. Projects (Projekte) - Select 2-3 most relevant to position type
+8. Hobbies (Hobbys) - Brief mention, include AI integration interest for tech positions
 
 **Formatting:**
 - Use modern fonts (Inter, Roboto, or Arial)
@@ -257,13 +343,16 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 
 ### CRITICAL RULES
 
-1. **Use ALL provided CV data** - name, address, phone, email, ALL experience, ALL education, ALL skills, projects, achievements
-2. **Extract contact information** from job posting accurately
-3. **Return only valid JSON** - no markdown, no code blocks, no explanatory text
-4. **Soften management titles** in both documents (Director → Projektleiter)
-5. **Write in perfect German** suitable for professional application
-6. **Make documents print-ready** with proper A4 formatting
-7. **Position career change** as natural evolution, not a jump
+1. **DETECT POSITION TYPE FIRST** - Read job posting carefully and identify: Web Developer / Logistics / Administrative / IT Support / General
+2. **APPLY CORRECT STRATEGY** - Use corresponding adaptation strategy for that position type
+3. **USE RELEVANT DATA** - Select most relevant experience, skills, and projects for the position type
+4. **ADAPT JOB TITLES** - Soften or emphasize management background based on position type
+5. **EXTRACT CONTACT INFO** - Company name, contact person, email, address from job posting
+6. **NO AI CLICHÉS** - Avoid forbidden phrases, write in business German style
+7. **VALID JSON ONLY** - Return only JSON, no markdown, no extra text
+8. **EMPHASIZE INTEGRATION** - Always mention: since 2022 in Germany, B2 German, work permit §24, immediate availability
+9. **SHOW FLEXIBILITY** - Willing to start with Probezeit/Praktikum, salary negotiable (18-20 EUR/h)
+10. **PRINT-READY** - Make documents professional, A4 format, ready to send
 
-Generate the documents now using ALL the Master-CV data provided above.`;
+Generate the documents now using the ADAPTIVE strategy based on the job posting type.`;
 }

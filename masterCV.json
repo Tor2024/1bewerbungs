@@ -7,20 +7,25 @@
     "email": "kalchenko2022@gmail.com",
     "photo": "photo.jpg",
     "portfolio": "https://ok-studio-umber.vercel.app",
+    "github": "https://github.com/Tor2024",
     "workPermit": "Aufenthaltserlaubnis nach § 24 AufenthG",
     "availability": "Vollzeit, sofort verfügbar",
     "familyStatus": "verheiratet, zwei Kinder (11 und 14 Jahre)",
-    "relocation": "Bei guten Konditionen deutschlandweit möglich"
+    "relocation": "Bei guten Konditionen deutschlandweit möglich",
+    "salaryExpectation": "ca. 18-20 EUR/Stunde (verhandelbar je nach Position)",
+    "willingToLearn": "Offen für Probezeit, Praktikum und befristete Verträge"
   },
   "profile": {
-    "de": "Erfahrener Experte in Datenverarbeitung, Systemtechnik und Logistikmanagement mit umfassender Projekterfahrung. Seit 2022 in Deutschland, spezialisiert auf moderne Webentwicklung mit React und Next.js. Selbstständiges Lernen durch AI-gestützte Methoden und praktische Projektarbeit. Kombiniert analytisches Denken aus dem Logistikbereich mit technischer Expertise für effiziente Softwarelösungen.",
-    "currentGoal": "Einstieg in die Web Development oder IT-Branche (offen für verschiedene Positionen)",
+    "de": "Vielseitiger Fachmann mit umfassender Erfahrung im Projektmanagement, Logistik und moderner Webentwicklung. Nach erfolgreicher Führungstätigkeit in der Ukraine seit 2022 in Deutschland mit abgeschlossenem B2-Deutschkurs. Spezialisiert auf systematische Arbeitsweise, Prozessoptimierung und technische Problemlösung. Selbstständig erlernte Webentwicklung (React, Next.js, AI-Integration) mit nachweisbarem Portfolio. Suche vielseitige Position vom Lager bis zur Softwareentwicklung.",
+    "currentGoal": "Flexible Einstiegsposition in IT, Logistik, Lager oder Verwaltung - offen für verschiedene Bereiche",
     "highlights": [
-      "Umfassende Erfahrung im Projektmanagement und in der Optimierung komplexer Prozesse",
-      "Selbstständig erlernte moderne Webentwicklung (React, Next.js, AI-Integration)",
-      "Praktische Erfahrung durch zahlreiche eigene Projekte und Portfolio-Arbeiten",
-      "Starke analytische Fähigkeiten und systematische Arbeitsweise",
-      "Deutschkenntnisse B2-Niveau (Zertifikat B1, Kurs B2 abgeschlossen)"
+      "20+ Jahre Berufserfahrung in Projektmanagement, Logistik und Zollwesen",
+      "Praktische Web-Entwicklungskenntnisse mit Portfolio (React, Next.js, AI-Integration)",
+      "GitHub-Profil mit 34 Repositories und 1.643+ Contributions",
+      "Starke organisatorische Fähigkeiten und systematische Arbeitsweise",
+      "Deutschkenntnisse B2-Niveau, bereit für weitere Verbesserung",
+      "Schnelle Auffassungsgabe und Bereitschaft für Weiterbildung",
+      "Zuverlässig, strukturiert und teamfähig"
     ]
   },
   "languages": {
@@ -133,31 +138,47 @@
     }
   ],
   "skills": {
-    "technical": [
-      "Logistik",
-      "internationale Beziehungen",
-      "Risikomanagement",
-      "Zollvorschriften",
+    "core": [
+      "Zuverlässigkeit und Pünktlichkeit",
+      "Strukturierte Arbeitsweise",
+      "Schnelle Auffassungsgabe",
+      "Teamfähigkeit",
+      "Selbstständiges Arbeiten",
+      "Belastbarkeit",
+      "Lösungsorientiertes Denken"
+    ],
+    "logistics": [
+      "Logistik und Lagerverwaltung",
+      "Zollvorschriften und Dokumentation",
+      "Internationale Beziehungen",
       "Versandabwicklung",
+      "Risikomanagement",
       "Kundenservice",
-      "Dokumentation",
       "Verhandlung",
-      "Marketing",
       "Projektmanagement",
-      "Prozessoptimierung",
-      "Systemtechnik"
+      "Prozessoptimierung"
+    ],
+    "technical": [
+      "Datenverarbeitung und Systemtechnik",
+      "Microsoft Office (Word, Excel, PowerPoint)",
+      "Dokumentation und Berichtswesen",
+      "Administrative Aufgaben",
+      "Qualitätskontrolle"
     ],
     "webDevelopment": [
       "React (Hooks, Context API, moderne Patterns)",
       "Next.js (App Router, Server Components, API Routes)",
       "JavaScript (ES6+, async/await, Promises)",
+      "TypeScript",
       "HTML5 & CSS3 (Responsive Design, Flexbox, Grid)",
       "Node.js & npm/yarn",
-      "Git & GitHub",
+      "Git & GitHub (34 Repositories, 1643+ Contributions)",
       "Vercel Deployment",
       "API Integration (REST, Google Gemini AI)",
       "Serverless Functions",
-      "AI-Integration in Webanwendungen"
+      "AI-Integration in Webanwendungen",
+      "SEO-Optimierung",
+      "Content Management Systeme"
     ],
     "tools": [
       "VS Code",
@@ -170,15 +191,23 @@
   },
   "projects": [
     {
+      "title": "OK Studio — Professionelle Web-Agentur Portfolio",
+      "description": "Vollständiges Portfolio-System mit modernem Industrial-Design, Case Studies, Blog-System, Admin-Panel und SEO-Optimierung für 12+ Städte. Umfasst zwei realisierte Kundenprojekte: Garten Siegerland (Design) und CarStyleGarage (Webseite für Auto-Folierungsstudio). Technische Features: KI & Automation-Integration, Cookie-Management, Performance-Monitoring, responsive Design.",
+      "url": "https://ok-studio-umber.vercel.app",
+      "github": "https://github.com/Tor2024/OK-STUDIO",
+      "technologies": "Next.js, React, TypeScript, Vercel, SEO-Optimierung, Content Management"
+    },
+    {
       "title": "KI-gestützter Bewerbungsgenerator",
       "description": "Entwicklung einer Web-Anwendung zur automatischen Generierung von personalisierten deutschen Bewerbungsunterlagen (Anschreiben und Lebenslauf) unter Verwendung von Google Gemini AI. Die Anwendung analysiert Stellenanzeigen, extrahiert relevante Informationen und passt den Master-CV automatisch an die jeweilige Position an. Implementiert mit Vercel Serverless Functions, API-Load-Balancing und modernem Frontend.",
+      "github": "https://github.com/Tor2024/1bewerbungs",
       "technologies": "JavaScript, Node.js, Google Gemini API, Vercel, HTML/CSS, AI-Integration"
     },
     {
-      "title": "OK Studio — Web-Design & Relaunch für den Mittelstand",
-      "description": "Professionelles Webdesign-Portfolio mit mehreren realisierten Projekten für mittelständische Unternehmen. Spezialisierung auf moderne, responsive Webseiten mit Fokus auf Benutzerfreundlichkeit und Performance. Umfasst Projekte für verschiedene Branchen mit kompletten Design- und Entwicklungslösungen.",
-      "url": "https://ok-studio-umber.vercel.app",
-      "technologies": "Webdesign, responsive Design, moderne Frontend-Technologien"
+      "title": "Web Studio Kalchenko",
+      "description": "Zusätzliches Webdesign-Portfolio mit Fokus auf professionelle Präsentation von Webentwicklungs-Dienstleistungen.",
+      "url": "https://web-studio-ok.vercel.app",
+      "technologies": "Webdesign, moderne Frontend-Technologien"
     },
     {
       "title": "Seefrachtcontainer-Lieferung",
