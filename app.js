@@ -1,8 +1,16 @@
-// Application State
+const STORAGE_KEYS = {
+    masterCV: 'master_cv',
+    userPhoto: 'user_photo',
+    lastApplication: 'last_application',
+    bundledCVVersion: 'bundled_master_cv_version'
+};
+
+const BUNDLED_MASTER_CV_VERSION = '2026-06-03';
+
 let masterCV = null;
 let userPhotoData = null;
+let lastApplication = null;
 
-// DOM Elements
 const elements = {
     masterCVInput: document.getElementById('masterCV'),
     loadSampleBtn: document.getElementById('loadSample'),
@@ -12,6 +20,8 @@ const elements = {
     photoPreview: document.getElementById('photoPreview'),
     generateBtn: document.getElementById('generateBtn'),
     outputSection: document.getElementById('outputSection'),
+    modelInfo: document.getElementById('modelInfo'),
+    clearLastApplicationBtn: document.getElementById('clearLastApplication'),
     anschreibenPreview: document.getElementById('anschreibenPreview'),
     lebenslaufPreview: document.getElementById('lebenslaufPreview'),
     checkSummary: document.getElementById('checkSummary'),
@@ -19,202 +29,356 @@ const elements = {
     checkData: document.getElementById('checkData')
 };
 
-// Event Listeners
 elements.masterCVInput.addEventListener('change', handleMasterCVUpload);
 elements.loadSampleBtn.addEventListener('click', loadSampleCV);
 elements.userPhotoInput.addEventListener('change', handlePhotoUpload);
 elements.generateBtn.addEventListener('click', generateDocuments);
+elements.clearLastApplicationBtn.addEventListener('click', clearLastApplication);
 
-// Tab switching
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => switchTab(button.dataset.tab));
 });
 
-// Print and download handlers
 document.getElementById('printAnschreiben').addEventListener('click', () => {
-    printDocument('anschreiben');
+    printDocument(lastApplication?.anschreiben_html);
 });
 
 document.getElementById('downloadAnschreiben').addEventListener('click', () => {
-    downloadDocument('anschreiben', elements.anschreibenPreview.innerHTML);
+    downloadDocument('anschreiben', lastApplication?.anschreiben_html);
 });
 
 document.getElementById('printLebenslauf').addEventListener('click', () => {
-    printDocument('lebenslauf');
+    printDocument(getLebenslaufHtmlWithPhoto());
 });
 
 document.getElementById('downloadLebenslauf').addEventListener('click', () => {
-    downloadDocument('lebenslauf', elements.lebenslaufPreview.innerHTML);
+    downloadDocument('lebenslauf', getLebenslaufHtmlWithPhoto());
 });
 
-// Handle Master CV Upload
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+function initializeApp() {
+    loadStoredMasterCV();
+    loadStoredPhoto();
+    loadStoredApplication();
+
+    if (!masterCV) {
+        loadSampleCV();
+    }
+}
+
+function loadStoredMasterCV() {
+    const storedValue = localStorage.getItem(STORAGE_KEYS.masterCV);
+    if (!storedValue) {
+        return;
+    }
+
+    try {
+        masterCV = JSON.parse(storedValue);
+        showStatus('success', 'Gespeicherter Master-CV geladen.');
+    } catch (error) {
+        localStorage.removeItem(STORAGE_KEYS.masterCV);
+        showStatus('error', 'Gespeicherter Master-CV ist ungültig und wurde entfernt.');
+        console.error('Stored CV parse error:', error);
+    }
+}
+
+function loadStoredPhoto() {
+    userPhotoData = localStorage.getItem(STORAGE_KEYS.userPhoto);
+    if (userPhotoData) {
+        showPhotoPreview(userPhotoData);
+    }
+}
+
+function loadStoredApplication() {
+    const storedValue = localStorage.getItem(STORAGE_KEYS.lastApplication);
+    if (!storedValue) {
+        return;
+    }
+
+    try {
+        lastApplication = JSON.parse(storedValue);
+        renderApplication(lastApplication);
+    } catch (error) {
+        localStorage.removeItem(STORAGE_KEYS.lastApplication);
+        console.error('Stored application parse error:', error);
+    }
+}
+
 function handleMasterCVUpload(event) {
     const file = event.target.files[0];
-    if (!file) return;
-    
+    if (!file) {
+        return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = event => {
         try {
-            masterCV = JSON.parse(e.target.result);
-            showStatus('success', 'Master-CV erfolgreich geladen!');
+            const parsedCV = JSON.parse(event.target.result);
+            validateMasterCV(parsedCV);
+            masterCV = parsedCV;
+            localStorage.setItem(STORAGE_KEYS.masterCV, JSON.stringify(masterCV));
+            showStatus('success', 'Master-CV gespeichert.');
         } catch (error) {
-            showStatus('error', 'Fehler beim Laden des Master-CV. Bitte überprüfen Sie das JSON-Format.');
-            console.error('CV Parse Error:', error);
+            showStatus('error', `Master-CV konnte nicht geladen werden: ${error.message}`);
+            console.error('CV parse error:', error);
         }
     };
+    reader.onerror = () => showStatus('error', 'Datei konnte nicht gelesen werden.');
     reader.readAsText(file);
 }
 
-// Load Sample CV
 async function loadSampleCV() {
     try {
-        const response = await fetch('masterCV.json');
-        masterCV = await response.json();
-        showStatus('success', 'Beispiel Master-CV geladen!');
+        const response = await fetch('masterCV.json', { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const sampleCV = await response.json();
+        validateMasterCV(sampleCV);
+        masterCV = sampleCV;
+        localStorage.setItem(STORAGE_KEYS.masterCV, JSON.stringify(masterCV));
+        localStorage.setItem(STORAGE_KEYS.bundledCVVersion, BUNDLED_MASTER_CV_VERSION);
+        showStatus('success', 'Beispiel Master-CV geladen und gespeichert.');
     } catch (error) {
-        showStatus('error', 'Fehler beim Laden des Beispiel-CV.');
-        console.error('Sample Load Error:', error);
+        showStatus('error', 'Beispiel-CV konnte nicht geladen werden.');
+        console.error('Sample CV load error:', error);
     }
 }
 
-// Handle Photo Upload
+async function refreshBundledCVIfNeeded() {
+    if (!isBundledCV(masterCV)) {
+        return;
+    }
+
+    const storedVersion = localStorage.getItem(STORAGE_KEYS.bundledCVVersion);
+    if (storedVersion === BUNDLED_MASTER_CV_VERSION) {
+        return;
+    }
+
+    await loadSampleCV();
+}
+
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
-    if (!file) return;
-    
+    if (!file) {
+        return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+        showStatus('error', 'Bitte eine Bilddatei auswählen.');
+        return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
-        userPhotoData = e.target.result;
-        elements.photoPreview.innerHTML = `<img src="${userPhotoData}" alt="Bewerbungsfoto" style="max-width: 150px; border-radius: 8px; margin-top: 10px;">`;
+    reader.onload = event => {
+        userPhotoData = event.target.result;
+        localStorage.setItem(STORAGE_KEYS.userPhoto, userPhotoData);
+        showPhotoPreview(userPhotoData);
+
+        if (lastApplication) {
+            renderApplication(lastApplication);
+        }
     };
+    reader.onerror = () => showStatus('error', 'Foto konnte nicht gelesen werden.');
     reader.readAsDataURL(file);
 }
 
-// Generate Documents
 async function generateDocuments() {
-    if (!masterCV) {
-        alert('Bitte laden Sie zuerst einen Master-CV!');
-        return;
-    }
-    
-    const jobDesc = elements.jobDescription.value.trim();
-    if (!jobDesc) {
-        alert('Bitte geben Sie eine Stellenanzeige ein!');
-        return;
-    }
-    
-    // Show loading
-    elements.generateBtn.disabled = true;
-    elements.generateBtn.textContent = '⏳ Generierung läuft...';
-    
     try {
-        // Call AI API
+        validateMasterCV(masterCV);
+    } catch (error) {
+        alert(`Bitte zuerst einen gültigen Master-CV laden: ${error.message}`);
+        return;
+    }
+
+    const jobDescription = elements.jobDescription.value.trim();
+    if (jobDescription.length < 30) {
+        alert('Bitte den vollständigen Text der Stellenanzeige einfügen.');
+        return;
+    }
+
+    setLoadingState(true);
+
+    try {
         const response = await fetch('/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 masterCV,
-                jobDescription: jobDesc
+                jobDescription
             })
         });
-        
+
+        const result = await response.json();
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            throw new Error(result.details || result.error || `HTTP ${response.status}`);
         }
-        
-        const aiResult = await response.json();
-        
-        // Generate HTML documents using AI result
-        const generator = new DocumentGenerator(masterCV, jobDesc, aiResult);
-        
-        // Generate Anschreiben with AI content
-        const anschreiben = generator.generateAnschreibenWithAI(aiResult.anschreiben_text);
-        elements.anschreibenPreview.innerHTML = anschreiben;
-        
-        // Generate Lebenslauf
-        const lebenslauf = generator.generateLebenslauf(userPhotoData);
-        elements.lebenslaufPreview.innerHTML = lebenslauf;
-        
-        // Show Quality Check
-        elements.checkSummary.textContent = aiResult.check_translation_ru.summary;
-        elements.checkTone.textContent = aiResult.check_translation_ru.tone_check;
-        elements.checkData.innerHTML = [
-            `Firma: ${aiResult.company_name}`,
-            `Kontakt: ${aiResult.contact_person || 'Keine spezifische Person gefunden'}`
-        ].map(item => `<li>${item}</li>`).join('');
-        
-        // Show output section
-        elements.outputSection.style.display = 'block';
-        
-        // Scroll to output
+
+        validateApplicationResult(result);
+        lastApplication = result;
+        localStorage.setItem(STORAGE_KEYS.lastApplication, JSON.stringify(result));
+        renderApplication(result);
         elements.outputSection.scrollIntoView({ behavior: 'smooth' });
-        
     } catch (error) {
-        alert('Fehler bei der Dokumentengenerierung: ' + error.message);
-        console.error('Generation Error:', error);
+        alert(`Fehler bei der Generierung: ${error.message}`);
+        console.error('Generation error:', error);
     } finally {
-        // Reset button
-        elements.generateBtn.disabled = false;
-        elements.generateBtn.textContent = '✨ Dokumente generieren';
+        setLoadingState(false);
     }
 }
 
-// Show Status Message
+function validateMasterCV(value) {
+    if (!value || typeof value !== 'object') {
+        throw new Error('JSON-Objekt erwartet.');
+    }
+
+    if (!value.personalInfo || typeof value.personalInfo !== 'object') {
+        throw new Error('personalInfo fehlt.');
+    }
+
+    if (!value.personalInfo.name || !value.personalInfo.email) {
+        throw new Error('Name oder E-Mail fehlt.');
+    }
+}
+
+function isBundledCV(value) {
+    return value?.personalInfo?.email === 'kalchenko2022@gmail.com'
+        && value?.personalInfo?.name === 'Oleh Kalchenko';
+}
+
+function validateApplicationResult(result) {
+    if (!result || typeof result !== 'object') {
+        throw new Error('Ungültige API-Antwort.');
+    }
+
+    const requiredFields = ['company_name', 'anschreiben_html', 'lebenslauf_html'];
+    for (const field of requiredFields) {
+        if (typeof result[field] !== 'string' || result[field].trim() === '') {
+            throw new Error(`API-Antwort ohne ${field}.`);
+        }
+    }
+
+    if (!result.check_translation_ru) {
+        throw new Error('Russische Prüfung fehlt.');
+    }
+}
+
+function renderApplication(result) {
+    elements.anschreibenPreview.srcdoc = sanitizeHtml(result.anschreiben_html);
+    elements.lebenslaufPreview.srcdoc = sanitizeHtml(getLebenslaufHtmlWithPhoto());
+    elements.checkSummary.textContent = result.check_translation_ru?.summary || '';
+    elements.checkTone.textContent = result.check_translation_ru?.tone_check || '';
+    elements.modelInfo.textContent = result.model_used ? `Modell: ${result.model_used}` : '';
+    elements.checkData.innerHTML = [
+        `Firma: ${result.company_name || 'nicht erkannt'}`,
+        `Kontakt: ${result.contact_person || 'nicht erkannt'}`
+    ].map(item => `<li>${escapeHtml(item)}</li>`).join('');
+    elements.outputSection.hidden = false;
+}
+
+function getLebenslaufHtmlWithPhoto() {
+    const html = lastApplication?.lebenslauf_html || '';
+    const photo = userPhotoData || masterCV?.personalInfo?.photo || '';
+    return html.replaceAll('[PHOTO_PATH]', photo);
+}
+
+function sanitizeHtml(html) {
+    const parser = new DOMParser();
+    const document = parser.parseFromString(html, 'text/html');
+    const blockedSelectors = 'script, iframe, object, embed, link[rel="import"]';
+
+    document.querySelectorAll(blockedSelectors).forEach(element => element.remove());
+    document.querySelectorAll('*').forEach(element => {
+        [...element.attributes].forEach(attribute => {
+            const name = attribute.name.toLowerCase();
+            const value = attribute.value.trim().toLowerCase();
+
+            if (name.startsWith('on') || value.startsWith('javascript:')) {
+                element.removeAttribute(attribute.name);
+            }
+        });
+    });
+
+    return `<!DOCTYPE html>${document.documentElement.outerHTML}`;
+}
+
+function showPhotoPreview(photoData) {
+    elements.photoPreview.innerHTML = `<img src="${photoData}" alt="Bewerbungsfoto">`;
+}
+
+function setLoadingState(isLoading) {
+    elements.generateBtn.disabled = isLoading;
+    elements.generateBtn.textContent = isLoading ? 'Generierung läuft...' : 'Dokumente generieren';
+}
+
 function showStatus(type, message) {
     elements.cvStatus.className = `status-message ${type}`;
     elements.cvStatus.textContent = message;
-    
-    setTimeout(() => {
-        elements.cvStatus.style.display = 'none';
-    }, 5000);
+    elements.cvStatus.style.display = 'block';
 }
 
-// Switch Tabs
 function switchTab(tabName) {
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.toggle('active', button.dataset.tab === tabName);
     });
-    
-    // Update tab content
+
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.toggle('active', content.id === `${tabName}-tab`);
     });
 }
 
-// Print Document
-function printDocument(docType) {
+function printDocument(html) {
+    if (!html) {
+        alert('Dokument ist noch nicht generiert.');
+        return;
+    }
+
     const printWindow = window.open('', '_blank');
-    const content = docType === 'anschreiben' 
-        ? elements.anschreibenPreview.innerHTML 
-        : elements.lebenslaufPreview.innerHTML;
-    
-    printWindow.document.write(content);
+    if (!printWindow) {
+        alert('Pop-up wurde blockiert. Bitte Pop-ups für diese Seite erlauben.');
+        return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(sanitizeHtml(html));
     printWindow.document.close();
-    
-    // Wait for content to load before printing
-    setTimeout(() => {
-        printWindow.print();
-    }, 250);
+    setTimeout(() => printWindow.print(), 500);
 }
 
-// Download Document
-function downloadDocument(docType, htmlContent) {
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+function downloadDocument(documentType, html) {
+    if (!html) {
+        alert('Dokument ist noch nicht generiert.');
+        return;
+    }
+
+    const safeName = (masterCV?.personalInfo?.name || 'bewerbung')
+        .replace(/[^\p{L}\p{N}]+/gu, '_')
+        .replace(/^_+|_+$/g, '');
+    const blob = new Blob([sanitizeHtml(html)], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${docType}_${masterCV.personalInfo.name.replace(/\s+/g, '_')}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `${documentType}_${safeName}.html`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
     URL.revokeObjectURL(url);
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('CV & Anschreiben Generator initialized');
-    
-    // Load sample CV on start for demo
-    loadSampleCV();
-});
+function clearLastApplication() {
+    localStorage.removeItem(STORAGE_KEYS.lastApplication);
+    lastApplication = null;
+    elements.outputSection.hidden = true;
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}

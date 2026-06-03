@@ -1,66 +1,60 @@
-# CV & Anschreiben Generator
+# Bewerbungsunterlagen Generator
 
-AI-powered adaptive German CV and cover letter generator for job applications.
+Web app for generating German application documents from a Master-CV and a concrete job description.
 
 ## Features
 
-- 🤖 AI-powered content generation using Gemini 2.5 Flash
-- 📄 Generate professional Anschreiben (cover letter) in DIN 5008 format
-- 📋 Create modern 2-column Lebenslauf (CV)
-- 🎯 Automatic company and contact person extraction from job description
-- 🔄 Anti-overqualified strategy for career transitions
-- 🌐 Fully client-side processing (except AI API calls)
-
-## Deploy to Vercel
-
-1. Click the button below to deploy:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Tor2024/1bewerbungs.git)
-
-2. Set environment variable in Vercel dashboard:
-   - `GEMINI_API_KEY` = your comma-separated Gemini API keys
-
-Example:
-```
-GEMINI_API_KEY=AIzaSyABC123...,AIzaSyDEF456...,AIzaSyGHI789...
-```
+- Gemini API generation for tailored `Anschreiben` and `Lebenslauf`
+- Master-CV, photo and last result stored in browser `localStorage`
+- `master_cv`, `user_photo` and `last_application` keys match the app workflow
+- DIN-style cover letter and two-column CV returned as print-ready HTML
+- Russian quality check before sending documents
+- Print dialog can save the generated document as PDF
 
 ## Local Development
 
-1. Clone the repository
-2. Create `.env` file with your API keys:
-   ```
-   GEMINI_API_KEY=your_key_1,your_key_2,your_key_3
-   ```
-3. Open `index.html` in your browser
+For the static UI, open `index.html` through a local server:
 
-For local API testing with Vercel CLI:
 ```bash
-npm i -g vercel
+python -m http.server 5173
+```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+The `/api/generate` endpoint is a Vercel serverless function. To test generation locally, use Vercel:
+
+```bash
 vercel dev
 ```
 
-## How It Works
+Set the API key before running Vercel:
 
-1. **Upload Master-CV** (JSON format with your complete work history)
-2. **Paste Job Description** (full text of the job posting)
-3. **Upload Photo** (optional, for CV)
-4. **Click Generate** - AI analyzes the job requirements and adapts your documents
-5. **Download/Print** - Get professionally formatted PDF-ready documents
+```bash
+GEMINI_API_KEY=your_key_here
+```
 
-## Technology Stack
+Optional model override:
 
-- **Frontend**: Vanilla JavaScript, HTML, CSS
-- **Backend**: Vercel Serverless Functions (Node.js)
-- **AI**: Google Gemini 2.5 Flash API
-- **Deployment**: Vercel
+```bash
+GEMINI_MODEL=gemini-2.0-flash,gemini-2.0-flash-lite,gemini-2.5-flash
+```
 
-## Security
+## Deployment
 
-- API keys are stored as environment variables in Vercel
-- Never exposed to client-side code
-- Load balancing across multiple keys for reliability
+Set this environment variable in Vercel:
 
-## License
+```text
+GEMINI_API_KEY=your_key_here
+```
 
-MIT
+Multiple keys can be comma-separated.
+
+## Security Notes
+
+- Never put a Gemini API key into frontend files or committed scripts.
+- The generated HTML is sanitized before preview and download.
+- The API key must stay on the server side in environment variables.

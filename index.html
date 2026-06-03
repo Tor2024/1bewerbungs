@@ -3,86 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV & Anschreiben Generator</title>
+    <title>Bewerbungsunterlagen Generator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🇩🇪 Adaptive CV & Anschreiben Generator</h1>
-            <p class="subtitle">Für den deutschen Arbeitsmarkt optimiert</p>
+            <h1>Adaptive Bewerbung</h1>
+            <p class="subtitle">Anschreiben und Lebenslauf passend zur konkreten Stelle</p>
         </header>
 
-        <div class="main-content">
-            <!-- Master CV Input Section -->
+        <main class="main-content">
             <section class="input-section">
-                <h2>1. Master-CV laden</h2>
+                <h2>1. Master-CV</h2>
                 <div class="file-upload">
                     <label for="masterCV" class="upload-label">
-                        <span>📄 Master-CV hochladen (JSON)</span>
-                        <input type="file" id="masterCV" accept=".json">
+                        <span>Master-CV als JSON laden</span>
+                        <input type="file" id="masterCV" accept=".json,application/json">
                     </label>
-                    <button id="loadSample" class="btn-secondary">Beispiel laden</button>
+                    <button id="loadSample" class="btn-secondary" type="button">Beispiel laden</button>
                 </div>
                 <div id="cvStatus" class="status-message"></div>
             </section>
 
-            <!-- Job Description Input -->
             <section class="input-section">
-                <h2>2. Stellenanzeige eingeben</h2>
-                <textarea 
-                    id="jobDescription" 
-                    placeholder="Kopieren Sie hier die vollständige Stellenanzeige..."
+                <h2>2. Stellenanzeige</h2>
+                <textarea
+                    id="jobDescription"
+                    placeholder="Hier den vollständigen Text der Stellenanzeige einfügen..."
                     rows="10"
                 ></textarea>
             </section>
 
-            <!-- User Photo Upload -->
             <section class="input-section">
-                <h2>3. Bewerbungsfoto (optional)</h2>
+                <h2>3. Bewerbungsfoto</h2>
                 <input type="file" id="userPhoto" accept="image/*">
+                <label for="userPhoto" class="upload-label compact-upload">
+                    <span>Foto laden oder gespeichertes Foto verwenden</span>
+                </label>
                 <div id="photoPreview"></div>
             </section>
 
-            <!-- Generate Button -->
             <div class="action-section">
-                <button id="generateBtn" class="btn-primary">
-                    ✨ Dokumente generieren
+                <button id="generateBtn" class="btn-primary" type="button">
+                    Dokumente generieren
                 </button>
             </div>
 
-            <!-- Output Section -->
-            <section id="outputSection" class="output-section" style="display: none;">
-                <h2>Generierte Dokumente</h2>
-                
+            <section id="outputSection" class="output-section" hidden>
+                <div class="output-heading">
+                    <div>
+                        <h2>Generierte Dokumente</h2>
+                        <p id="modelInfo" class="muted"></p>
+                    </div>
+                    <button id="clearLastApplication" class="btn-action" type="button">Cache löschen</button>
+                </div>
+
                 <div class="document-tabs">
-                    <button class="tab-btn active" data-tab="anschreiben">Anschreiben</button>
-                    <button class="tab-btn" data-tab="lebenslauf">Lebenslauf</button>
-                    <button class="tab-btn" data-tab="check">Qualitätsprüfung</button>
+                    <button class="tab-btn active" data-tab="anschreiben" type="button">Anschreiben</button>
+                    <button class="tab-btn" data-tab="lebenslauf" type="button">Lebenslauf</button>
+                    <button class="tab-btn" data-tab="check" type="button">Prüfung</button>
                 </div>
 
                 <div class="tab-content active" id="anschreiben-tab">
                     <div class="document-actions">
-                        <button class="btn-action" id="printAnschreiben">🖨️ Drucken</button>
-                        <button class="btn-action" id="downloadAnschreiben">💾 Als HTML speichern</button>
+                        <button class="btn-action" id="printAnschreiben" type="button">Drucken / PDF</button>
+                        <button class="btn-action" id="downloadAnschreiben" type="button">HTML speichern</button>
                     </div>
-                    <div id="anschreibenPreview" class="document-preview"></div>
+                    <iframe id="anschreibenPreview" class="document-frame" title="Anschreiben Vorschau"></iframe>
                 </div>
 
                 <div class="tab-content" id="lebenslauf-tab">
                     <div class="document-actions">
-                        <button class="btn-action" id="printLebenslauf">🖨️ Drucken</button>
-                        <button class="btn-action" id="downloadLebenslauf">💾 Als HTML speichern</button>
+                        <button class="btn-action" id="printLebenslauf" type="button">Drucken / PDF</button>
+                        <button class="btn-action" id="downloadLebenslauf" type="button">HTML speichern</button>
                     </div>
-                    <div id="lebenslaufPreview" class="document-preview"></div>
+                    <iframe id="lebenslaufPreview" class="document-frame" title="Lebenslauf Vorschau"></iframe>
                 </div>
 
                 <div class="tab-content" id="check-tab">
                     <div class="quality-check">
                         <h3>Краткое содержание</h3>
                         <p id="checkSummary"></p>
-                        
-                        <h3>Анализ тона</h3>
+
+                        <h3>Тон письма</h3>
                         <p id="checkTone"></p>
 
                         <h3>Найденные данные</h3>
@@ -90,10 +94,9 @@
                     </div>
                 </div>
             </section>
-        </div>
+        </main>
     </div>
 
-    <script src="generator.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
