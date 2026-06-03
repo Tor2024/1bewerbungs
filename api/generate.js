@@ -46,12 +46,60 @@ module.exports = async (req, res) => {
         const data = await response.json();
         let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
         
-        // Clean markdown if present
+        console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
+        console.log(text.substring(0, 2000));
+        console.log('=== END RAW RESPONSE ===');
+        
+        // Clean markdown wrapper
         text = text.trim().replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
         
-        // Parse JSON
-        const result = JSON.parse(text);
-        return res.status(200).json(result);
+        // Try parsing
+        try {
+            const result = JSON.parse(text);
+            console.log('✓ JSON parsed successfully');
+            return res.status(200).json(result);
+        } catch (parseError) {
+            console.error('✗ JSON Parse Error:', parseError.message);
+            console.error('Error at position:', parseError.message.match(/position (\d+)/)?.[1]);
+            
+            // Try fix 1: Find and log the problematic character
+            const errorPos = parseInt(parseError.message.match(/position (\d+)/)?.[1] || '0');
+            if (errorPos > 0) {
+                console.error('Context around error:');
+                console.error(text.substring(Math.max(0, errorPos - 100), errorPos + 100));
+            }
+            
+            // Try fix 2: Replace unescaped quotes in HTML content
+            try {
+                console.log('Attempting to fix unescaped quotes...');
+                
+                // Find HTML content between quotes and escape internal quotes
+                let fixedText = text.replace(
+                    /"(anschreiben_html|lebenslauf_html)":\s*"([^"]*)"/g,
+                    (match, key, html) => {
+                        // This won't work because HTML contains unescaped quotes
+                        return match;
+                    }
+                );
+                
+                const result = JSON.parse(fixedText);
+                console.log('✓ Fixed and parsed successfully');
+                return res.status(200).json(result);
+            } catch (secondError) {
+                console.error('✗ Fix attempt failed:', secondError.message);
+                
+                // Return detailed error for debugging
+                return res.status(500).json({
+                    error: 'JSON parsing failed',
+                    originalError: parseError.message,
+                    fixAttemptError: secondError.message,
+                    rawPreview: text.substring(0, 2000),
+                    errorPosition: errorPos,
+                    errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 50), errorPos + 50) : null,
+                    hint: 'Check server logs for full response'
+                });
+            }
+        }
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
     }
@@ -63,21 +111,20 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-Return valid JSON wrapped in ```json markers.
+**MOST IMPORTANT RULE:** Never put unescaped double quotes (") inside JSON string values!
 
-Format:
-```json
-{
-  "company_name": "...",
-  "contact_person": "...",
-  "contact_email": "...",
-  "anschreiben_html": "...",
-  "lebenslauf_html": "...",
-  "check_translation_ru": {...}
-}
-```
+When generating HTML strings in JSON:
+1. Start with: ```json
+2. Use ESCAPED quotes for HTML attributes: \\" not "
+3. Example CORRECT: "anschreiben_html": "<div class=\\"header\\">text</div>"
+4. Example WRONG: "anschreiben_html": "<div class="header">text</div>"
+5. End with: ```
 
-FOR HTML STRINGS: Replace ALL newlines with actual \\n character. Use single quotes for attributes.
+Alternative (BETTER): Use single quotes in HTML to avoid escaping:
+- GOOD: "anschreiben_html": "<div class='header'>text</div>"
+- NO escaping needed for single quotes!
+
+Choose single quotes method - it's simpler and safer.
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
@@ -530,11 +577,12 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- Wrap response in ```json code block
-- Replace newlines in HTML with \\n character  
-- Use single quotes for HTML attributes
-- Escape backslashes and quotes properly
-- Keep HTML on one line per field
+- Wrap entire response in ```json and ``` markers
+- Use SINGLE QUOTES (') for ALL HTML attributes - NEVER double quotes (")
+- Example: <div class='header'> NOT <div class="header">
+- If you use double quotes in HTML, you MUST escape them: <div class=\\"header\\">
+- Single quotes are MUCH SAFER - always prefer them
+- No literal newlines in JSON strings - HTML can be on one long line
 
 ### CRITICAL RULES
 
