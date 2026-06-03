@@ -273,7 +273,8 @@ function renderApplication(result) {
     elements.modelInfo.textContent = result.model_used ? `Modell: ${result.model_used}` : '';
     elements.checkData.innerHTML = [
         `Firma: ${result.company_name || 'nicht erkannt'}`,
-        `Kontakt: ${result.contact_person || 'nicht erkannt'}`
+        `Kontakt: ${result.contact_person || 'nicht erkannt'}`,
+        `E-Mail: ${result.contact_email || 'nicht erkannt'}`
     ].map(item => `<li>${escapeHtml(item)}</li>`).join('');
     elements.outputSection.hidden = false;
 }
