@@ -304,10 +304,9 @@ For EACH requirement in job posting, provide concrete evidence from CV:
 - **Show unique value:** What you bring that others don't (management experience + tech skills + AI integration)
 
 **Example of good matching:**
-```
+
 Job requires: "Erfahrung mit React und Next.js, REST-API Integration"
 Your response: "Praktische Erfahrung mit React und Next.js in produktiven Projekten: OK Studio (Next.js-basierte Portfolio-Plattform mit SEO-Optimierung) und AI-Generator (React mit Google Gemini REST-API Integration). Portfolio einsehbar unter ok-studio-umber.vercel.app, Code auf GitHub (34 Repositories)."
-```
 
 ### JOB POSTING
 ${jobDescription}
