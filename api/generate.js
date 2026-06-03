@@ -2,6 +2,7 @@ const API_KEYS = (process.env.GEMINI_API_KEY || '').split(',').filter(k => k.tri
 let keyIndex = 0;
 
 module.exports = async (req, res) => {
+    // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,20 +10,37 @@ module.exports = async (req, res) => {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    console.log('=== API CALL START ===');
+    console.log('Environment check: API_KEYS count =', API_KEYS.length);
+    
     if (API_KEYS.length === 0) {
-        return res.status(500).json({ error: 'No API keys', hint: 'Set GEMINI_API_KEY' });
+        console.error('❌ NO API KEYS CONFIGURED!');
+        return res.status(500).json({ error: 'No API keys configured', hint: 'Set GEMINI_API_KEY in Vercel environment variables' });
     }
 
     try {
         const { masterCV, jobDescription } = req.body || {};
-        if (!masterCV) return res.status(400).json({ error: 'masterCV required' });
-        if (!jobDescription) return res.status(400).json({ error: 'jobDescription required' });
+        console.log('Request received. Has masterCV:', !!masterCV, 'Has jobDescription:', !!jobDescription);
+        
+        if (!masterCV) {
+            console.error('❌ masterCV missing');
+            return res.status(400).json({ error: 'masterCV required' });
+        }
+        if (!jobDescription) {
+            console.error('❌ jobDescription missing');
+            return res.status(400).json({ error: 'jobDescription required' });
+        }
+        
+        console.log('Job description length:', jobDescription.length, 'chars');
 
         const apiKey = API_KEYS[keyIndex++ % API_KEYS.length];
+        console.log('Using API key index:', (keyIndex - 1) % API_KEYS.length);
         
         // Build complete prompt with ALL CV data
         const prompt = buildPrompt(masterCV, jobDescription);
+        console.log('Prompt built. Length:', prompt.length, 'chars');
 
+        console.log('Calling Gemini API...');
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
             {
@@ -38,23 +56,36 @@ module.exports = async (req, res) => {
             }
         );
 
+        console.log('Gemini response status:', response.status, response.statusText);
+
         if (!response.ok) {
             const err = await response.text();
-            return res.status(500).json({ error: 'Gemini failed', details: err.substring(0, 200) });
+            console.error('❌ Gemini API error:', err.substring(0, 500));
+            return res.status(500).json({ 
+                error: 'Gemini API failed', 
+                status: response.status,
+                details: err.substring(0, 200),
+                hint: 'Check Vercel logs for full error'
+            });
         }
 
         const data = await response.json();
+        console.log('Gemini response parsed. Has candidates:', !!data.candidates);
+        
         let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
         
         // Check if we got a response
         if (!text) {
-            console.error('No text in Gemini response:', data);
+            console.error('❌ Gemini returned empty text!');
+            console.error('Full response:', JSON.stringify(data, null, 2));
             return res.status(500).json({
                 error: 'Gemini returned empty response',
                 fullResponse: data,
-                hint: 'API may have blocked the request or model is unavailable'
+                hint: 'API may have blocked the request, check for safety filters or quota limits'
             });
         }
+        
+        console.log('✓ Got response from Gemini. Length:', text.length, 'chars');
         
         console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
         console.log(text.substring(0, 2000));
@@ -296,8 +327,8 @@ ${jobDescription}
 
 **IMPORTANT:** Return complete HTML document with inline CSS. No external stylesheets.
 
-**HTML Structure Example:**
-```html
+**HTML Structure Example (use single quotes for all attributes):**
+
 <!DOCTYPE html>
 <html lang='de'>
 <head>
@@ -331,7 +362,6 @@ body {
 <!-- Full content here with single quotes in all attributes -->
 </body>
 </html>
-```
 
 **CRITICAL:** Use single quotes (') for ALL HTML attributes, never double quotes (")
 
@@ -411,12 +441,12 @@ Structure:
 
 **IMPORTANT:** Return complete HTML document with inline CSS. Include photo placeholder.
 
-**HTML Structure Example:**
-```html
+**HTML Structure Example (use single quotes for all attributes):**
+
 <!DOCTYPE html>
-<html lang="de">
+<html lang='de'>
 <head>
-<meta charset="UTF-8">
+<meta charset='UTF-8'>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
@@ -491,22 +521,21 @@ body {
 </style>
 </head>
 <body>
-<div class="header">
-  <img src="[PHOTO_PATH]" alt="Bewerbungsfoto" class="photo">
-  <div class="header-info">
-    <div class="name">NAME HERE</div>
-    <div class="contact">
-      <div class="contact-item">📍 Address</div>
-      <div class="contact-item">📞 Phone</div>
-      <div class="contact-item">✉ Email</div>
-      <div class="contact-item">🌐 Portfolio/GitHub</div>
+<div class='header'>
+  <img src='[PHOTO_PATH]' alt='Bewerbungsfoto' class='photo'>
+  <div class='header-info'>
+    <div class='name'>NAME HERE</div>
+    <div class='contact'>
+      <div class='contact-item'>📍 Address</div>
+      <div class='contact-item'>📞 Phone</div>
+      <div class='contact-item'>✉ Email</div>
+      <div class='contact-item'>🌐 Portfolio/GitHub</div>
     </div>
   </div>
 </div>
 <!-- Sections here -->
 </body>
 </html>
-```
 
 Modern 2-column layout:
 - **Left column (30%):** Photo placeholder [PHOTO_PATH], contact info (including portfolio and GitHub for tech positions), languages, core skills
@@ -544,14 +573,13 @@ Modern 2-column layout:
 - Ensure photo displays correctly at ~35-40mm width in print
 
 **CSS Requirements for Print:**
-```css
+
 @media print {
   body { margin: 0; padding: 0; }
   @page { size: A4; margin: 15mm; }
   .no-print { display: none; }
   img { max-width: 100%; page-break-inside: avoid; }
 }
-```
 
 **Photo Integration:**
 - Photo should be in top-left of CV (2-column layout)
