@@ -50,8 +50,11 @@ module.exports = async (req, res) => {
         console.log(text.substring(0, 2000));
         console.log('=== END RAW RESPONSE ===');
         
-        // Clean markdown wrapper
-        text = text.trim().replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+        // Clean any markdown if present (but we told AI not to use it)
+        text = text.trim();
+        if (text.startsWith('```')) {
+            text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+        }
         
         // Try parsing
         try {
@@ -60,45 +63,27 @@ module.exports = async (req, res) => {
             return res.status(200).json(result);
         } catch (parseError) {
             console.error('✗ JSON Parse Error:', parseError.message);
-            console.error('Error at position:', parseError.message.match(/position (\d+)/)?.[1]);
             
-            // Try fix 1: Find and log the problematic character
-            const errorPos = parseInt(parseError.message.match(/position (\d+)/)?.[1] || '0');
+            // Get error position
+            const errorMatch = parseError.message.match(/position (\d+)/);
+            const errorPos = errorMatch ? parseInt(errorMatch[1]) : 0;
+            
             if (errorPos > 0) {
-                console.error('Context around error:');
-                console.error(text.substring(Math.max(0, errorPos - 100), errorPos + 100));
+                const start = Math.max(0, errorPos - 100);
+                const end = Math.min(text.length, errorPos + 100);
+                console.error('Context around error position', errorPos, ':');
+                console.error(text.substring(start, errorPos) + ' <<<ERROR>>> ' + text.substring(errorPos, end));
             }
             
-            // Try fix 2: Replace unescaped quotes in HTML content
-            try {
-                console.log('Attempting to fix unescaped quotes...');
-                
-                // Find HTML content between quotes and escape internal quotes
-                let fixedText = text.replace(
-                    /"(anschreiben_html|lebenslauf_html)":\s*"([^"]*)"/g,
-                    (match, key, html) => {
-                        // This won't work because HTML contains unescaped quotes
-                        return match;
-                    }
-                );
-                
-                const result = JSON.parse(fixedText);
-                console.log('✓ Fixed and parsed successfully');
-                return res.status(200).json(result);
-            } catch (secondError) {
-                console.error('✗ Fix attempt failed:', secondError.message);
-                
-                // Return detailed error for debugging
-                return res.status(500).json({
-                    error: 'JSON parsing failed',
-                    originalError: parseError.message,
-                    fixAttemptError: secondError.message,
-                    rawPreview: text.substring(0, 2000),
-                    errorPosition: errorPos,
-                    errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 50), errorPos + 50) : null,
-                    hint: 'Check server logs for full response'
-                });
-            }
+            // Return detailed error
+            return res.status(500).json({
+                error: 'JSON parsing failed',
+                originalError: parseError.message,
+                errorPosition: errorPos,
+                rawPreview: text.substring(0, 2000),
+                errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 100), Math.min(text.length, errorPos + 100)) : null,
+                hint: 'AI returned invalid JSON. Check server logs for full response. Error at position ' + errorPos
+            });
         }
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
@@ -111,20 +96,15 @@ function buildPrompt(masterCV, jobDescription) {
     
     return `### CRITICAL: JSON OUTPUT FORMAT
 
-**MOST IMPORTANT RULE:** Never put unescaped double quotes (") inside JSON string values!
+Return ONLY the JSON object, nothing else. No markdown, no explanations.
 
-When generating HTML strings in JSON:
-1. Start with: ```json
-2. Use ESCAPED quotes for HTML attributes: \\" not "
-3. Example CORRECT: "anschreiben_html": "<div class=\\"header\\">text</div>"
-4. Example WRONG: "anschreiben_html": "<div class="header">text</div>"
-5. End with: ```
+**CRITICAL RULES:**
+1. Use \\\" (backslash quote) for ANY quote inside HTML strings
+2. OR use single quotes ' for HTML attributes (safer!)
+3. Put entire HTML on ONE line (no line breaks)
+4. Example: "html": "<html><body><p class='text'>Content</p></body></html>"
 
-Alternative (BETTER): Use single quotes in HTML to avoid escaping:
-- GOOD: "anschreiben_html": "<div class='header'>text</div>"
-- NO escaping needed for single quotes!
-
-Choose single quotes method - it's simpler and safer.
+Start your response with { and end with }
 
 ### ROLE
 You are an expert HR engineer and document architect for the German job market. Your task: based on the user's Master-CV and specific job posting, generate two adaptive documents (Anschreiben and Lebenslauf).
@@ -577,12 +557,11 @@ Return ONLY valid JSON (no markdown code blocks, no extra text):
 10. **Encoding:** UTF-8 with proper German umlauts (ä, ö, ü, ß)
 
 **CRITICAL JSON REQUIREMENTS:**
-- Wrap entire response in ```json and ``` markers
-- Use SINGLE QUOTES (') for ALL HTML attributes - NEVER double quotes (")
-- Example: <div class='header'> NOT <div class="header">
-- If you use double quotes in HTML, you MUST escape them: <div class=\\"header\\">
-- Single quotes are MUCH SAFER - always prefer them
-- No literal newlines in JSON strings - HTML can be on one long line
+- NO markdown wrapper, NO ```json
+- Start with { immediately
+- Use single quotes ' for all HTML attributes
+- Put HTML on one continuous line
+- Escape any literal quotes in text content
 
 ### CRITICAL RULES
 

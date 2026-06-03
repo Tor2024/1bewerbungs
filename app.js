@@ -272,8 +272,20 @@ async function generateDocuments() {
         });
 
         const result = await response.json();
+        
         if (!response.ok) {
-            throw new Error(result.details || result.error || `HTTP ${response.status}`);
+            // Show detailed error information
+            console.error('API Error:', result);
+            
+            let errorMessage = result.error || 'Unknown error';
+            if (result.errorContext) {
+                errorMessage += '\n\nContext: ' + result.errorContext;
+            }
+            if (result.rawPreview) {
+                console.log('Raw API response preview:', result.rawPreview);
+            }
+            
+            throw new Error(errorMessage);
         }
 
         validateApplicationResult(result);
@@ -282,7 +294,7 @@ async function generateDocuments() {
         renderApplication(result);
         elements.outputSection.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
-        alert(`Fehler bei der Generierung: ${error.message}`);
+        alert(`Fehler bei der Generierung:\n\n${error.message}\n\nBitte prüfen Sie die Browser-Konsole (F12) für Details.`);
         console.error('Generation error:', error);
     } finally {
         setLoadingState(false);
