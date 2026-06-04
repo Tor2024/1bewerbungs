@@ -1,4 +1,10 @@
-process.env.GEMINI_API_KEY = 'AIzaSyDq7FNnypiK7DVuv3LDkzg9LRz_rm1zv3s';
+// IMPORTANT: Never commit API keys!
+// Set GEMINI_API_KEY environment variable before running this test
+if (!process.env.GEMINI_API_KEY) {
+    console.error('ERROR: GEMINI_API_KEY environment variable not set');
+    console.error('Usage: GEMINI_API_KEY=your_key_here node test-api.js');
+    process.exit(1);
+}
 
 const handler = require('./api/generate.js');
 
