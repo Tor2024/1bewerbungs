@@ -29,7 +29,7 @@
     ]
   },
   "languages": {
-    "Deutsch": "B2-Niveau (Zertifikat B1, Kurs B2 abgeschlossen)",
+    "Deutsch": "B1-Zertifikat (B2-Niveau in Arbeit)",
     "Ukrainisch": "Muttersprache",
     "Russisch": "Muttersprache",
     "English": "Grundkenntnisse"
@@ -100,7 +100,8 @@
   ],
   "education": [
     {
-      "degree": "Datenverarbeitung und Systemtechnik",
+      "degree": "Ingenieur-Systemtechniker",
+      "specialty": "Computersysteme der Datenverarbeitung und Informationssteuerung",
       "institution": "Charkiw National University of Radio Electronics",
       "location": "Charkiw, Ukraine",
       "period": "Sep 1996 — Jun 2001",
@@ -119,10 +120,10 @@
   ],
   "furtherEducation": [
     {
-      "course": "Deutschkurs B2-Niveau",
+      "course": "Deutschkurse (B1-Zertifikat, B2-Niveau)",
       "institution": "Sprachschule in Deutschland",
-      "period": "2022 — 2026",
-      "certificate": "Zertifikat B1 vorhanden, B2-Kurs abgeschlossen"
+      "period": "2022 — heute",
+      "certificate": "Zertifikat B1 vorhanden"
     },
     {
       "course": "Web Development (React, Next.js, JavaScript)",

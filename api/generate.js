@@ -205,7 +205,21 @@ function buildPrompt(masterCV, jobDescription) {
     const cv = masterCV;
     const pi = cv.personalInfo || {};
     
+    // Get current date in German format
+    const today = new Date();
+    const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    const currentDate = `${today.getDate()}. ${months[today.getMonth()]} ${today.getFullYear()}`;
+    
     return `Create German job application documents (Anschreiben + Lebenslauf) as JSON with HTML.
+
+CRITICAL CONTEXT ABOUT CANDIDATE:
+- Lives in GERMANY since 2022 after war relocation from Ukraine
+- German level: B1 certificate, studying towards B2 (NOT native!)
+- Situation: Seeking ANY available work - from warehouse to IT
+- Strategy: Adapt to EACH job - don't always mention portfolio/GitHub if not relevant
+- Since 2022: Learning German + various courses + self-taught web development
+- Work permit: §24 AufenthG, available immediately
+- Education: "Ingenieur-Systemtechniker" (NOT Spezialist!) - specialty "Computersysteme der Datenverarbeitung und Informationssteuerung"
 
 OUTPUT FORMAT - Start with {:
 {
@@ -227,6 +241,7 @@ CRITICAL HTML RULES:
 2. NEVER use double quotes in HTML: <div class="wrong"> ← THIS BREAKS JSON!
 3. Example CORRECT: <html lang='de'><body class='document'>
 4. Example WRONG: <html lang="de"> ← NO!
+5. Use proper CSS to avoid text overlap - proper margins, padding, positioning
 
 CANDIDATE:
 ${pi.name}, born ${pi.birthDate}
@@ -239,8 +254,9 @@ EXPERIENCE:
 ${(cv.experience || []).slice(0,2).map(e => `${e.position} at ${e.company}, ${e.period}`).join('\n')}
 
 EDUCATION:
-${cv.education?.[0]?.degree}, ${cv.education?.[0]?.institution}, ${cv.education?.[0]?.period}
-B2 German course completed
+Ingenieur-Systemtechniker (Engineer in System Engineering), Specialty: Computersysteme der Datenverarbeitung und Informationssteuerung
+${cv.education?.[0]?.institution}, ${cv.education?.[0]?.period}
+Since 2022 in Germany: German language courses (B1 certificate, studying B2) + various professional development courses
 
 SKILLS:
 ${(cv.skills?.webDevelopment || []).slice(0,8).join(', ')}
@@ -252,11 +268,18 @@ JOB POSTING:
 ${jobDescription}
 
 TASKS:
-1. Analyze job type (Developer/Logistics/Admin/IT/General)
-2. Create Anschreiben (DIN 5008, date: "Kreuztal, den 3. Juni 2026", include ${pi.phone} and full address)
-3. Create Lebenslauf (modern, photo [PHOTO_PATH], university as "Studium")
-4. For Developer positions: emphasize GitHub, Portfolio, AI projects
-5. Match job requirements - use their exact keywords
-6. Present facts favorably but honestly
-7. Complete HTML with inline CSS, print-ready A4`;
+1. Analyze job type (Developer/Logistics/Admin/IT/General/Warehouse/Production)
+2. Create Anschreiben (DIN 5008, date: "Kreuztal, den ${currentDate}", include ${pi.phone} and full address)
+3. For NON-TECH jobs (warehouse, production, service): Focus on reliability, work ethic, logistics experience. DON'T mention portfolio/GitHub unless tech-relevant!
+4. For TECH jobs (Developer, IT): Mention GitHub, Portfolio, projects
+5. Create Lebenslauf: 
+   - Modern clean layout, NO text overlap, proper spacing
+   - Photo [PHOTO_PATH] top-right corner
+   - Education: "Studium" section with title "Ingenieur-Systemtechniker, Fachrichtung: Computersysteme der Datenverarbeitung und Informationssteuerung"
+   - Weiterbildung: "Seit 2022 in Deutschland: Deutschkurse (B1-Zertifikat, B2-Niveau), Webentwicklung (selbstständig erlernt)"
+6. Tone: Motivated but realistic. NOT overconfident. Seeking opportunity, willing to learn, flexible.
+7. Integration story: Since 2022 in Germany, learning language, seeking stable work, family integrated (2 children in school)
+8. Match job requirements - use their exact keywords
+9. Present facts favorably but honestly - acknowledge if changing fields
+10. Complete HTML with inline CSS, print-ready A4, proper spacing to avoid overlaps`;
 }
