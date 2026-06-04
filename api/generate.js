@@ -212,8 +212,8 @@ OUTPUT FORMAT - Start with {:
   "company_name": "extracted from job",
   "contact_person": "name or null",
   "contact_email": "email or null",
-  "anschreiben_html": "complete HTML, escape quotes: class=\\"x\\"",
-  "lebenslauf_html": "complete HTML, escape quotes",
+  "anschreiben_html": "complete HTML",
+  "lebenslauf_html": "complete HTML",
   "check_translation_ru": {
     "summary": "detailed Russian summary 3-4 sentences",
     "tone_check": "tone description",
@@ -222,7 +222,11 @@ OUTPUT FORMAT - Start with {:
   }
 }
 
-CRITICAL: Escape ALL quotes in HTML with backslash: <div class=\\"header\\">
+CRITICAL HTML RULES:
+1. Use ONLY single quotes in ALL HTML attributes: <div class='header' id='main'>
+2. NEVER use double quotes in HTML: <div class="wrong"> ← THIS BREAKS JSON!
+3. Example CORRECT: <html lang='de'><body class='document'>
+4. Example WRONG: <html lang="de"> ← NO!
 
 CANDIDATE:
 ${pi.name}, born ${pi.birthDate}
