@@ -38,98 +38,134 @@ module.exports = async (req, res) => {
         const prompt = buildPrompt(masterCV, jobDescription);
         console.log('Prompt built. Length:', prompt.length, 'chars');
 
-        console.log('Calling Gemini API...');
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { 
-                        temperature: 0.3,
-                        maxOutputTokens: 8000
+        let lastError = null;
+        let attempts = 0;
+        const maxAttempts = Math.min(API_KEYS.length, 5); // Try up to 5 keys
+
+        while (attempts < maxAttempts) {
+            const currentKeyIndex = (keyIndex - 1 + attempts) % API_KEYS.length;
+            const currentKey = API_KEYS[currentKeyIndex];
+            console.log(`Attempt ${attempts + 1}/${maxAttempts}, using key index: ${currentKeyIndex}`);
+
+            try {
+                console.log('Calling Gemini API...');
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${currentKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: { 
+                                temperature: 0.3,
+                                maxOutputTokens: 8000
+                            }
+                        })
                     }
-                })
+                );
+
+                console.log('Gemini response status:', response.status, response.statusText);
+
+                if (response.status === 403 || response.status === 429) {
+                    const err = await response.text();
+                    console.error(`❌ Key ${currentKeyIndex} failed with ${response.status}:`, err.substring(0, 200));
+                    lastError = { status: response.status, details: err };
+                    attempts++;
+                    continue; // Try next key
+                }
+
+                if (!response.ok) {
+                    const err = await response.text();
+                    console.error('❌ Gemini API error:', err.substring(0, 500));
+                    return res.status(500).json({ 
+                        error: 'Gemini API failed', 
+                        status: response.status,
+                        details: err.substring(0, 200),
+                        hint: 'Check Vercel logs for full error'
+                    });
+                }
+
+                const data = await response.json();
+                console.log('Gemini response parsed. Has candidates:', !!data.candidates);
+                
+                let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                
+                if (!text) {
+                    console.error('❌ Gemini returned empty text!');
+                    console.error('Full response:', JSON.stringify(data, null, 2));
+                    return res.status(500).json({
+                        error: 'Gemini returned empty response',
+                        fullResponse: data,
+                        hint: 'API may have blocked the request, check for safety filters or quota limits'
+                    });
+                }
+                
+                console.log('✓ Got response from Gemini. Length:', text.length, 'chars');
+                console.log('✓ Success with key index:', currentKeyIndex);
+                
+                console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
+                console.log(text.substring(0, 2000));
+                console.log('=== END RAW RESPONSE ===');
+                
+                // Success! Process the response
+                if (!text.trim().startsWith('{')) {
+                    console.error('Response does not start with JSON!');
+                    console.error('Response starts with:', text.substring(0, 200));
+                    return res.status(500).json({
+                        error: 'Gemini did not return JSON',
+                        responsePreview: text.substring(0, 500),
+                        hint: 'AI returned text instead of JSON. Possible safety block or refusal.'
+                    });
+                }
+                
+                text = text.trim();
+                if (text.startsWith('```')) {
+                    text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+                }
+                
+                try {
+                    const result = JSON.parse(text);
+                    console.log('✓ JSON parsed successfully');
+                    
+                    return res.status(200).json(result);
+                } catch (parseError) {
+                    console.error('✗ JSON Parse Error:', parseError.message);
+                    
+                    const errorMatch = parseError.message.match(/position (\d+)/);
+                    const errorPos = errorMatch ? parseInt(errorMatch[1]) : 0;
+                    
+                    if (errorPos > 0) {
+                        const start = Math.max(0, errorPos - 100);
+                        const end = Math.min(text.length, errorPos + 100);
+                        console.error('Context around error position', errorPos, ':');
+                        console.error(text.substring(start, errorPos) + ' <<<ERROR>>> ' + text.substring(errorPos, end));
+                    }
+                    
+                    return res.status(500).json({
+                        error: 'JSON parsing failed',
+                        originalError: parseError.message,
+                        errorPosition: errorPos,
+                        rawPreview: text.substring(0, 2000),
+                        errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 100), Math.min(text.length, errorPos + 100)) : null,
+                        hint: 'AI returned invalid JSON. Check server logs for full response. Error at position ' + errorPos
+                    });
+                }
+            } catch (fetchError) {
+                console.error('❌ Fetch error:', fetchError.message);
+                lastError = { error: fetchError.message };
+                attempts++;
+                continue; // Try next key
             }
-        );
-
-        console.log('Gemini response status:', response.status, response.statusText);
-
-        if (!response.ok) {
-            const err = await response.text();
-            console.error('❌ Gemini API error:', err.substring(0, 500));
-            return res.status(500).json({ 
-                error: 'Gemini API failed', 
-                status: response.status,
-                details: err.substring(0, 200),
-                hint: 'Check Vercel logs for full error'
-            });
         }
 
-        const data = await response.json();
-        console.log('Gemini response parsed. Has candidates:', !!data.candidates);
-        
-        let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        
-        if (!text) {
-            console.error('❌ Gemini returned empty text!');
-            console.error('Full response:', JSON.stringify(data, null, 2));
-            return res.status(500).json({
-                error: 'Gemini returned empty response',
-                fullResponse: data,
-                hint: 'API may have blocked the request, check for safety filters or quota limits'
-            });
-        }
-        
-        console.log('✓ Got response from Gemini. Length:', text.length, 'chars');
-        
-        console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
-        console.log(text.substring(0, 2000));
-        console.log('=== END RAW RESPONSE ===');
-        
-        if (!text.trim().startsWith('{')) {
-            console.error('Response does not start with JSON!');
-            console.error('Response starts with:', text.substring(0, 200));
-            return res.status(500).json({
-                error: 'Gemini did not return JSON',
-                responsePreview: text.substring(0, 500),
-                hint: 'AI returned text instead of JSON. Possible safety block or refusal.'
-            });
-        }
-        
-        text = text.trim();
-        if (text.startsWith('```')) {
-            text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
-        }
-        
-        try {
-            const result = JSON.parse(text);
-            console.log('✓ JSON parsed successfully');
-            
-            return res.status(200).json(result);
-        } catch (parseError) {
-            console.error('✗ JSON Parse Error:', parseError.message);
-            
-            const errorMatch = parseError.message.match(/position (\d+)/);
-            const errorPos = errorMatch ? parseInt(errorMatch[1]) : 0;
-            
-            if (errorPos > 0) {
-                const start = Math.max(0, errorPos - 100);
-                const end = Math.min(text.length, errorPos + 100);
-                console.error('Context around error position', errorPos, ':');
-                console.error(text.substring(start, errorPos) + ' <<<ERROR>>> ' + text.substring(errorPos, end));
-            }
-            
-            return res.status(500).json({
-                error: 'JSON parsing failed',
-                originalError: parseError.message,
-                errorPosition: errorPos,
-                rawPreview: text.substring(0, 2000),
-                errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 100), Math.min(text.length, errorPos + 100)) : null,
-                hint: 'AI returned invalid JSON. Check server logs for full response. Error at position ' + errorPos
-            });
-        }
+        // All attempts failed
+        console.error('❌ All API key attempts failed');
+        return res.status(500).json({ 
+            error: 'All API keys failed', 
+            attempts: attempts,
+            lastError: lastError,
+            hint: 'Tried multiple keys, all failed. Check quota or key validity.'
+        });
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
     }
