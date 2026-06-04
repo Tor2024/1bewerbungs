@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
                             contents: [{ parts: [{ text: prompt }] }],
                             generationConfig: { 
                                 temperature: 0.3,
-                                maxOutputTokens: 8000
+                                maxOutputTokens: 16000  // Increased from 8000 to allow complete response
                             }
                         })
                     }
@@ -95,19 +95,59 @@ module.exports = async (req, res) => {
                 const data = await response.json();
                 console.log('Gemini response parsed. Has candidates:', !!data.candidates);
                 
-                let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                
-                if (!text) {
-                    console.error('❌ Gemini returned empty text!');
-                    console.error('Full response:', JSON.stringify(data, null, 2));
+                // Check if response was blocked or incomplete
+                const candidate = data.candidates?.[0];
+                if (!candidate) {
+                    console.error('❌ No candidates in response');
                     return res.status(500).json({
-                        error: 'Gemini returned empty response',
+                        error: 'No candidates in Gemini response',
                         fullResponse: data,
-                        hint: 'API may have blocked the request, check for safety filters or quota limits'
+                        hint: 'Response may have been blocked by safety filters'
                     });
                 }
                 
+                const finishReason = candidate.finishReason;
+                console.log('Finish reason:', finishReason);
+                
+                // Check if response was blocked by safety filters
+                if (finishReason === 'SAFETY' || finishReason === 'RECITATION') {
+                    console.error('❌ Response blocked:', finishReason);
+                    lastError = { status: 'BLOCKED', details: finishReason };
+                    attempts++;
+                    continue; // Try next key
+                }
+                
+                let text = candidate.content?.parts?.[0]?.text || '';
+                
+                if (!text) {
+                    console.error('❌ Gemini returned empty text!');
+                    lastError = { status: 'EMPTY', details: 'No text in response' };
+                    attempts++;
+                    continue; // Try next key
+                }
+                
                 console.log('✓ Got response from Gemini. Length:', text.length, 'chars');
+                
+                // CHECK FOR INCOMPLETE RESPONSE - if too short, retry with next key
+                if (text.length < 3000) {
+                    console.error('⚠️ Response too short! Only', text.length, 'chars - likely incomplete');
+                    console.error('Response preview:', text.substring(0, 500));
+                    lastError = { status: 'TOO_SHORT', details: `Only ${text.length} chars` };
+                    attempts++;
+                    continue; // Try next key
+                }
+                
+                // Check if response ends abruptly (incomplete JSON)
+                const trimmed = text.trim();
+                if (!trimmed.endsWith('}') && !trimmed.endsWith(']')) {
+                    console.error('⚠️ Response appears incomplete (does not end with } or ])');
+                    console.error('Last 200 chars:', text.substring(text.length - 200));
+                    lastError = { status: 'INCOMPLETE', details: 'Response cut off mid-generation' };
+                    attempts++;
+                    continue; // Try next key
+                }
+                
+                console.log('✓ Response length check passed');
                 console.log('✓ Success with key index:', currentKeyIndex);
                 
                 console.log('=== RAW GEMINI RESPONSE (first 2000 chars) ===');
@@ -152,11 +192,9 @@ module.exports = async (req, res) => {
                 if (!text.trim().startsWith('{')) {
                     console.error('Response does not start with JSON!');
                     console.error('Response starts with:', text.substring(0, 200));
-                    return res.status(500).json({
-                        error: 'Gemini did not return JSON',
-                        responsePreview: text.substring(0, 500),
-                        hint: 'AI returned text instead of JSON. Possible safety block or refusal.'
-                    });
+                    lastError = { status: 'NOT_JSON', details: 'Response is not JSON format' };
+                    attempts++;
+                    continue; // Try next key
                 }
                 
                 // Don't trim again, already cleaned above
@@ -178,14 +216,15 @@ module.exports = async (req, res) => {
                         console.error(text.substring(start, errorPos) + ' <<<ERROR>>> ' + text.substring(errorPos, end));
                     }
                     
-                    return res.status(500).json({
-                        error: 'JSON parsing failed',
-                        originalError: parseError.message,
-                        errorPosition: errorPos,
-                        rawPreview: text.substring(0, 2000),
-                        errorContext: errorPos > 0 ? text.substring(Math.max(0, errorPos - 100), Math.min(text.length, errorPos + 100)) : null,
-                        hint: 'AI returned invalid JSON. Check server logs for full response. Error at position ' + errorPos
-                    });
+                    // If JSON parse fails, this response is incomplete - try next key
+                    console.error('⚠️ Incomplete or invalid JSON, trying next key...');
+                    lastError = { 
+                        status: 'PARSE_ERROR', 
+                        details: parseError.message,
+                        length: text.length 
+                    };
+                    attempts++;
+                    continue; // Try next key
                 }
             } catch (fetchError) {
                 console.error('❌ Fetch error:', fetchError.message);
