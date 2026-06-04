@@ -40,12 +40,19 @@ module.exports = async (req, res) => {
 
         let lastError = null;
         let attempts = 0;
-        const maxAttempts = Math.min(API_KEYS.length, 5); // Try up to 5 keys
+        const maxAttempts = Math.min(API_KEYS.length, 10); // Try up to 10 keys
 
         while (attempts < maxAttempts) {
             const currentKeyIndex = (keyIndex - 1 + attempts) % API_KEYS.length;
             const currentKey = API_KEYS[currentKeyIndex];
             console.log(`Attempt ${attempts + 1}/${maxAttempts}, using key index: ${currentKeyIndex}`);
+
+            // Add delay between attempts to avoid overwhelming API
+            if (attempts > 0) {
+                const delayMs = attempts <= 3 ? 1000 : 2000; // 1s for first retries, 2s for later
+                console.log(`Waiting ${delayMs}ms before retry...`);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+            }
 
             try {
                 console.log('Calling Gemini API...');
