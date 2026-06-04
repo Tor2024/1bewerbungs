@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
 
                 console.log('Gemini response status:', response.status, response.statusText);
 
-                if (response.status === 403 || response.status === 429 || response.status === 503) {
+                if (response.status === 403 || response.status === 429 || response.status === 503 || response.status === 400) {
                     const err = await response.text();
                     console.error(`❌ Key ${currentKeyIndex} failed with ${response.status}:`, err.substring(0, 200));
                     lastError = { status: response.status, details: err };
@@ -137,16 +137,6 @@ module.exports = async (req, res) => {
                     continue; // Try next key
                 }
                 
-                // Check if response ends abruptly (incomplete JSON)
-                const trimmed = text.trim();
-                if (!trimmed.endsWith('}') && !trimmed.endsWith(']')) {
-                    console.error('⚠️ Response appears incomplete (does not end with } or ])');
-                    console.error('Last 200 chars:', text.substring(text.length - 200));
-                    lastError = { status: 'INCOMPLETE', details: 'Response cut off mid-generation' };
-                    attempts++;
-                    continue; // Try next key
-                }
-                
                 console.log('✓ Response length check passed');
                 console.log('✓ Success with key index:', currentKeyIndex);
                 
@@ -154,12 +144,18 @@ module.exports = async (req, res) => {
                 console.log(text.substring(0, 2000));
                 console.log('=== END RAW RESPONSE ===');
                 
-                // Clean up response
+                // Clean up response - AGGRESSIVE cleaning to handle Gemini's markdown
                 text = text.trim();
                 
-                // Remove markdown code blocks
+                // Remove markdown code blocks from START
                 if (text.startsWith('```')) {
-                    text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+                    text = text.replace(/^```json?\s*/i, '');
+                    text = text.trim();
+                }
+                
+                // Remove markdown code blocks from END (the problem!)
+                if (text.endsWith('```')) {
+                    text = text.replace(/\s*```\s*$/g, '');
                     text = text.trim();
                 }
                 
@@ -187,6 +183,7 @@ module.exports = async (req, res) => {
                 }
                 
                 console.log('Cleaned text starts with:', text.substring(0, 100));
+                console.log('Cleaned text ends with:', text.substring(text.length - 100));
                 
                 // Success! Process the response
                 if (!text.trim().startsWith('{')) {
