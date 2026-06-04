@@ -107,6 +107,40 @@ module.exports = async (req, res) => {
                 console.log(text.substring(0, 2000));
                 console.log('=== END RAW RESPONSE ===');
                 
+                // Clean up response
+                text = text.trim();
+                
+                // Remove markdown code blocks
+                if (text.startsWith('```')) {
+                    text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+                    text = text.trim();
+                }
+                
+                // Remove common prefixes
+                const prefixes = [
+                    /^json\s*/i,
+                    /^here is the json:?\s*/i,
+                    /^here's the json:?\s*/i,
+                    /^output:?\s*/i,
+                    /^result:?\s*/i
+                ];
+                
+                for (const prefix of prefixes) {
+                    if (prefix.test(text)) {
+                        text = text.replace(prefix, '').trim();
+                    }
+                }
+                
+                // Find first { and last }
+                const firstBrace = text.indexOf('{');
+                const lastBrace = text.lastIndexOf('}');
+                
+                if (firstBrace !== -1 && lastBrace !== -1 && firstBrace < lastBrace) {
+                    text = text.substring(firstBrace, lastBrace + 1);
+                }
+                
+                console.log('Cleaned text starts with:', text.substring(0, 100));
+                
                 // Success! Process the response
                 if (!text.trim().startsWith('{')) {
                     console.error('Response does not start with JSON!');
@@ -118,11 +152,7 @@ module.exports = async (req, res) => {
                     });
                 }
                 
-                text = text.trim();
-                if (text.startsWith('```')) {
-                    text = text.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
-                }
-                
+                // Don't trim again, already cleaned above
                 try {
                     const result = JSON.parse(text);
                     console.log('✓ JSON parsed successfully');
