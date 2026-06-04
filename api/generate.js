@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
 
                 console.log('Gemini response status:', response.status, response.statusText);
 
-                if (response.status === 403 || response.status === 429) {
+                if (response.status === 403 || response.status === 429 || response.status === 503) {
                     const err = await response.text();
                     console.error(`❌ Key ${currentKeyIndex} failed with ${response.status}:`, err.substring(0, 200));
                     lastError = { status: response.status, details: err };
