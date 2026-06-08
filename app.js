@@ -280,6 +280,15 @@ async function generateDocuments() {
             // Build detailed error message
             let errorDetails = `Fehler: ${result.error || 'Unknown error'}`;
             
+            if (result.serviceUnavailableCount > 0) {
+                errorDetails += `\n\n⚠️ Gemini API ist überlastet (${result.serviceUnavailableCount} von ${result.attempts} Versuchen).`;
+                errorDetails += `\n\nBitte warten Sie 2-3 Minuten und versuchen Sie es erneut.`;
+            }
+            
+            if (result.attempts && result.totalKeys) {
+                errorDetails += `\n\nVersucht: ${result.attempts} von ${result.totalKeys} API-Schlüsseln`;
+            }
+            
             if (result.responsePreview) {
                 errorDetails += `\n\nGemini hat zurückgegeben:\n${result.responsePreview.substring(0, 300)}...`;
             }
@@ -289,7 +298,11 @@ async function generateDocuments() {
             }
             
             if (result.hint) {
-                errorDetails += `\n\nHinweis: ${result.hint}`;
+                errorDetails += `\n\n💡 ${result.hint}`;
+            }
+            
+            if (result.lastError) {
+                errorDetails += `\n\nLetzte Fehlerdetails: ${JSON.stringify(result.lastError, null, 2)}`;
             }
             
             // Show in alert

@@ -40,7 +40,10 @@ module.exports = async (req, res) => {
 
         let lastError = null;
         let attempts = 0;
-        const maxAttempts = Math.min(API_KEYS.length, 10); // Try up to 10 keys
+        const maxAttempts = API_KEYS.length; // Try ALL available keys
+        let serviceUnavailableCount = 0;
+
+        console.log(`Will try up to ${maxAttempts} keys if needed`);
 
         while (attempts < maxAttempts) {
             const currentKeyIndex = (keyIndex - 1 + attempts) % API_KEYS.length;
@@ -49,7 +52,15 @@ module.exports = async (req, res) => {
 
             // Add delay between attempts to avoid overwhelming API
             if (attempts > 0) {
-                const delayMs = attempts <= 3 ? 1000 : 2000; // 1s for first retries, 2s for later
+                // Longer delays if getting 503 errors (API overload)
+                let delayMs = 1000;
+                if (serviceUnavailableCount > 3) {
+                    delayMs = 5000; // 5s if many 503s
+                } else if (attempts > 10) {
+                    delayMs = 3000; // 3s after 10 attempts
+                } else if (attempts > 5) {
+                    delayMs = 2000; // 2s after 5 attempts
+                }
                 console.log(`Waiting ${delayMs}ms before retry...`);
                 await new Promise(resolve => setTimeout(resolve, delayMs));
             }
@@ -76,7 +87,18 @@ module.exports = async (req, res) => {
                 if (response.status === 403 || response.status === 429 || response.status === 503 || response.status === 400) {
                     const err = await response.text();
                     console.error(`❌ Key ${currentKeyIndex} failed with ${response.status}:`, err.substring(0, 200));
-                    lastError = { status: response.status, details: err };
+                    
+                    // Track 503 errors for adaptive delays
+                    if (response.status === 503) {
+                        serviceUnavailableCount++;
+                        console.log(`⚠️ Service unavailable count: ${serviceUnavailableCount}`);
+                    }
+                    
+                    lastError = { 
+                        status: response.status, 
+                        details: err.substring(0, 300),
+                        keyIndex: currentKeyIndex
+                    };
                     attempts++;
                     continue; // Try next key
                 }
@@ -233,11 +255,19 @@ module.exports = async (req, res) => {
 
         // All attempts failed
         console.error('❌ All API key attempts failed');
+        console.error('Total attempts:', attempts);
+        console.error('Service unavailable errors:', serviceUnavailableCount);
+        console.error('Last error:', JSON.stringify(lastError, null, 2));
+        
         return res.status(500).json({ 
             error: 'All API keys failed', 
             attempts: attempts,
+            totalKeys: API_KEYS.length,
+            serviceUnavailableCount: serviceUnavailableCount,
             lastError: lastError,
-            hint: 'Tried multiple keys, all failed. Check quota or key validity.'
+            hint: lastError?.status === 503 
+                ? 'Gemini API is overloaded. Try again in a few minutes.'
+                : 'All keys exhausted. Check Vercel logs for details.'
         });
     } catch (error) {
         return res.status(500).json({ error: 'Failed', details: error.message });
