@@ -221,6 +221,18 @@ module.exports = async (req, res) => {
                     const result = JSON.parse(text);
                     console.log('✓ JSON parsed successfully');
                     
+                    // Validate that photo placeholder is present in Lebenslauf
+                    if (result.lebenslauf_html && !result.lebenslauf_html.includes('[PHOTO_PATH]')) {
+                        console.warn('⚠️ WARNING: [PHOTO_PATH] placeholder not found in Lebenslauf HTML!');
+                        console.warn('This means photo will not be inserted. Retrying with next key...');
+                        lastError = { 
+                            status: 'MISSING_PHOTO_PLACEHOLDER', 
+                            details: 'Lebenslauf HTML does not contain [PHOTO_PATH] placeholder'
+                        };
+                        attempts++;
+                        continue; // Try next key
+                    }
+                    
                     return res.status(200).json(result);
                 } catch (parseError) {
                     console.error('✗ JSON Parse Error:', parseError.message);
@@ -315,6 +327,8 @@ CRITICAL HTML RULES:
 3. Example CORRECT: <html lang='de'><body class='document'>
 4. Example WRONG: <html lang="de"> ← NO!
 5. Use proper CSS to avoid text overlap - proper margins, padding, positioning
+6. **PHOTO PLACEHOLDER**: In Lebenslauf HTML, use EXACTLY [PHOTO_PATH] in img src - DO NOT generate base64 or URL!
+   Example: <img src='[PHOTO_PATH]' alt='Photo' style='width: 120px; height: 160px; object-fit: cover;'>
 
 CANDIDATE:
 ${pi.name}, born ${pi.birthDate}
@@ -347,7 +361,9 @@ TASKS:
 4. For TECH jobs (Developer, IT): Mention GitHub, Portfolio, projects
 5. Create Lebenslauf: 
    - Modern clean layout, NO text overlap, proper spacing
-   - Photo [PHOTO_PATH] top-right corner
+   - Photo placeholder: EXACTLY the text [PHOTO_PATH] in src attribute - DO NOT modify or replace it!
+   - Example: <img src='[PHOTO_PATH]' alt='Bewerbungsfoto' style='width: 120px; height: 160px;'>
+   - Photo position: top-right corner
    - Education: "Studium" section with title "Ingenieur-Systemtechniker, Fachrichtung: Computersysteme der Datenverarbeitung und Informationssteuerung"
    - Weiterbildung: "Seit 2022 in Deutschland: Deutschkurse (B1-Zertifikat, B2-Niveau), Webentwicklung (selbstständig erlernt)"
 6. Tone: Motivated but realistic. NOT overconfident. Seeking opportunity, willing to learn, flexible.
