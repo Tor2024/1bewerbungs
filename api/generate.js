@@ -321,6 +321,18 @@ OUTPUT FORMAT - Start with {:
   }
 }
 
+ANSCHREIBEN STRUCTURE (CONCISE - fit on 1 page!):
+1. Header: Sender address, date, recipient address (DIN 5008)
+2. Subject line: "Bewerbung als [Position]"
+3. Salutation: "Sehr geehrte/r [Name]" or "Sehr geehrte Damen und Herren"
+4. Einleitung (2-3 sentences): Why applying, where found job posting
+5. Hauptteil - Paragraph 1 (3-4 sentences): Most relevant experience/skills for THIS job
+6. Hauptteil - Paragraph 2 (2-3 sentences OPTIONAL): Additional qualification or motivation
+7. Schluss (2-3 sentences): Availability, willingness to interview, polite closing
+8. Closing: "Mit freundlichen Grüßen" + Name
+
+**TOTAL: Maximum 12-15 sentences for entire letter body!**
+
 CRITICAL HTML RULES:
 1. Use ONLY single quotes in ALL HTML attributes: <div class='header' id='main'>
 2. NEVER use double quotes in HTML: <div class="wrong"> ← THIS BREAKS JSON!
@@ -357,6 +369,12 @@ ${jobDescription}
 TASKS:
 1. Analyze job type (Developer/Logistics/Admin/IT/General/Warehouse/Production)
 2. Create Anschreiben (DIN 5008, date: "Kreuztal, den ${currentDate}", include ${pi.phone} and full address)
+   **IMPORTANT: Keep Anschreiben SHORT and CONCISE!**
+   - Maximum 3-4 paragraphs (Einleitung, Hauptteil 1-2 paragraphs, Schluss)
+   - Each paragraph: 3-5 sentences maximum
+   - Total length: fit on ONE A4 page with margins
+   - Be direct and specific - avoid generic phrases
+   - Focus on 2-3 most relevant qualifications only
 3. For NON-TECH jobs (warehouse, production, service): Focus on reliability, work ethic, logistics experience. DON'T mention portfolio/GitHub unless tech-relevant!
 4. For TECH jobs (Developer, IT): Mention GitHub, Portfolio, projects
 5. Create Lebenslauf: 
@@ -370,5 +388,6 @@ TASKS:
 7. Integration story: Since 2022 in Germany, learning language, seeking stable work, family integrated (2 children in school)
 8. Match job requirements - use their exact keywords
 9. Present facts favorably but honestly - acknowledge if changing fields
-10. Complete HTML with inline CSS, print-ready A4, proper spacing to avoid overlaps`;
+10. Complete HTML with inline CSS, print-ready A4, proper spacing to avoid overlaps
+11. **ANSCHREIBEN LENGTH: Keep it SHORT! 3-4 paragraphs, 12-15 sentences total. German employers prefer concise letters.**`;
 }
